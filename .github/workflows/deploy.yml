@@ -1,6 +1,6 @@
 name: Deploy til GitHub Pages
 
-# Publiserer siden på hver push til main. Ingen byggesteg, filene serveres som de er.
+# Publiserer siden på hver push til main. Eneste behandling: cache-busting av CSS/JS.
 on:
   push:
     branches: [main]
@@ -26,6 +26,10 @@ jobs:
     steps:
       - name: Hent koden
         uses: actions/checkout@v4
+
+      # Bytt ?v=dev mot commit-SHA-en, så nettlesere aldri serverer utdatert CSS/JS
+      - name: Cache-bust CSS/JS
+        run: sed -i "s/?v=dev/?v=${GITHUB_SHA::8}/g" index.html
 
       - name: Sett opp Pages
         uses: actions/configure-pages@v5
