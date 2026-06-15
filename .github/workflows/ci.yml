@@ -1,4 +1,4 @@
-name: CI — valider HTML
+name: CI, valider HTML
 
 # Rådgivende sjekk. Kjører på push og PR, men blokkerer IKKE deploy-workflowen.
 on:

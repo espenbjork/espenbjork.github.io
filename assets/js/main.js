@@ -1,5 +1,5 @@
 /* ============================================================
-   main.js — grunnleggende interaksjon, helt uten avhengigheter
+   main.js, grunnleggende interaksjon, helt uten avhengigheter
    ============================================================ */
 (() => {
   "use strict";
@@ -18,7 +18,7 @@
 
   /* Reveal-on-scroll: marker seksjoner og kort, animer dem inn når de er synlige */
   const revealTargets = document.querySelectorAll(
-    ".hero, .section__head, .cards > li, .timeline__item, .section--contact > *"
+    ".section__head, .cards > li, .timeline__item, .section--contact > *"
   );
 
   if (!motionOn || !("IntersectionObserver" in window)) {

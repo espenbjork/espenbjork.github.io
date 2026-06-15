@@ -2,7 +2,7 @@
   "name": "espenbjork-portefolje",
   "version": "1.0.0",
   "private": true,
-  "description": "Personlig porteføljeside — statisk, uten byggesteg.",
+  "description": "Personlig porteføljeside, statisk, uten byggesteg.",
   "author": "Espen Bjørk <espen@betulae.net>",
   "license": "UNLICENSED",
   "homepage": "https://espenbjork.github.io/",

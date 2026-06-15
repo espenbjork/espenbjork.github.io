@@ -1,5 +1,5 @@
 /* ============================================================
-   DESIGNSYSTEM — varm redaksjonell, leken aksent
+   DESIGNSYSTEM, varm redaksjonell, leken aksent
    ============================================================ */
 :root{
   /* Flater */
@@ -15,12 +15,12 @@
   --line:rgba(22,48,42,.14);
   --line-2:rgba(22,48,42,.26);
 
-  /* Aksent — dus, brent oransje (tweakbar) */
+  /* Aksent, dus, brent oransje (tweakbar) */
   --accent:#bd6a39;
   --accent-ink:#f1efe5;
   --accent-soft:color-mix(in srgb, var(--accent) 14%, var(--paper));
 
-  /* British racing green — dypt panel */
+  /* British racing green, dypt panel */
   --brg:#0d3527;
   --brg-2:#0e3a2b;
   --on-green:#e8ebe0;
@@ -117,12 +117,33 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 /* ============================================================
    HERO
    ============================================================ */
-.hero{ padding-block:clamp(3.5rem, 10vw, 7rem) clamp(2.5rem,6vw,4rem); position:relative; }
-.hero__kicker{
-  font-family:var(--sans); text-transform:uppercase;
-  letter-spacing:.18em; font-size:.78rem; font-weight:600;
-  color:var(--accent);
-  margin-bottom:1.4rem;
+.hero{ padding-block:clamp(1.25rem, 4vw, 3rem) clamp(2.5rem,6vw,4rem); position:relative; }
+.hero > *{ position:relative; z-index:1; }
+
+/* Animert krussedull i det åpne feltet til høyre */
+.hero__squiggle{
+  position:absolute; z-index:0; pointer-events:none;
+  top:50%; right:clamp(-1rem, 2vw, 2.5rem);
+  width:clamp(240px, 30vw, 440px); height:auto;
+  color:var(--ink);
+  transform:translateY(-50%);
+}
+.hero__squiggle path{
+  fill:none; stroke:currentColor; stroke-width:2.5;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1300; stroke-dashoffset:1300;
+}
+.is-ready .hero__squiggle path{ animation:squiggle-draw 2.8s var(--ease) forwards; }
+[data-motion="on"] .is-ready .hero__squiggle{ animation:squiggle-float 9s ease-in-out 2.6s infinite; }
+@keyframes squiggle-draw{ to{ stroke-dashoffset:0; } }
+@keyframes squiggle-float{
+  0%,100%{ transform:translateY(-50%) rotate(0deg); }
+  50%{ transform:translateY(-53%) rotate(2.5deg); }
+}
+@media (max-width:860px){ .hero__squiggle{ display:none; } }
+@media (prefers-reduced-motion:reduce){
+  .hero__squiggle path{ stroke-dashoffset:0; animation:none; }
+  .hero__squiggle{ animation:none; }
 }
 .hero__title{
   font-size:clamp(2.6rem, 1.8rem + 5.2vw, 5.6rem);
@@ -137,10 +158,6 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   transition:transform .8s var(--ease) .4s;
 }
 .is-ready .hero__strike::after{ transform:scaleX(1); }
-.hero__lead{
-  margin-top:1.8rem; max-width:48ch;
-  font-size:clamp(1.05rem,1rem + .4vw,1.3rem); color:var(--ink-2);
-}
 .hero__actions{ display:flex; flex-wrap:wrap; gap:.9rem; margin-top:2.4rem; }
 
 .btn{
@@ -161,7 +178,6 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   font-family:var(--hand); color:var(--accent);
   font-size:1.5rem; line-height:1.1; transform:rotate(-2.5deg);
 }
-.hero__note{ margin-top:2rem; max-width:24ch; }
 [data-notes="off"] .margin-note{ display:none; }
 
 /* ============================================================
@@ -181,7 +197,7 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 .section__intro strong{ color:var(--ink); font-weight:600; }
 
 /* ============================================================
-   ARBEID — kort
+   ARBEID, kort
    ============================================================ */
 .cards{
   display:grid; gap:1.25rem;
@@ -236,7 +252,7 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 .nytteverdi__pct{ font-size:.82rem; font-weight:600; font-variant-numeric:tabular-nums; }
 
 /* ============================================================
-   ERFARING — tidslinje på dypt grønt panel
+   ERFARING, tidslinje på dypt grønt panel
    ============================================================ */
 .section--cv{
   width:100%;

@@ -1,8 +1,8 @@
-# Espen Bjørk — porteføljeside
+# Espen Bjørk, porteføljeside
 
 Personlig porteføljeside. Bevisst lavteknologisk: **ren HTML/CSS/JS, ingen
 rammeverk og ingen byggesteg.** Det gjør den rask, lett å vedlikeholde, og
-triviell å publisere — `git push`, så er den live.
+triviell å publisere, `git push`, så er den live.
 
 🔗 **Live:** https://espenbjork.github.io/
 
@@ -42,7 +42,7 @@ filer manuelt.
 │   ├── favicon.svg
 │   └── og-image.svg         # delingsbilde (sosiale medier)
 ├── .github/workflows/
-│   ├── deploy.yml           # bygger ingenting — publiserer til GitHub Pages
+│   ├── deploy.yml           # bygger ingenting, publiserer til GitHub Pages
 │   └── ci.yml               # validerer HTML på hver PR/push (rådgivende)
 ├── .nojekyll                # be Pages servere filene som de er
 ├── sitemap.xml · robots.txt
@@ -67,7 +67,7 @@ npm run validate   # sjekk at HTML-en er gyldig (html-validate)
 npm run format     # formater alt med Prettier
 ```
 
-Alle scriptene kjører via `npx` og laster verktøyet ved behov — ingen
+Alle scriptene kjører via `npx` og laster verktøyet ved behov, ingen
 `npm install` nødvendig.
 
 ---
@@ -77,7 +77,7 @@ Alle scriptene kjører via `npx` og laster verktøyet ved behov — ingen
 - **Hosting:** GitHub Pages, bygget fra GitHub Actions (ikke fra en branch).
 - **Trigger:** hver push til `main` (`.github/workflows/deploy.yml`).
 - **Validering:** `ci.yml` kjører `html-validate` på PR-er og pusher. Den er
-  rådgivende og blokkerer *ikke* deploy — så en liten advarsel stopper deg aldri
+  rådgivende og blokkerer *ikke* deploy, så en liten advarsel stopper deg aldri
   fra å publisere, men du ser den.
 
 ### Eget domene

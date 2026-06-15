@@ -1,6 +1,6 @@
 name: Deploy til GitHub Pages
 
-# Publiserer siden på hver push til main. Ingen byggesteg — filene serveres som de er.
+# Publiserer siden på hver push til main. Ingen byggesteg, filene serveres som de er.
 on:
   push:
     branches: [main]

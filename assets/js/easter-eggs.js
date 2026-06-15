@@ -1,5 +1,5 @@
 /* ============================================================
-   easter-eggs.js — den useriøse delen
+   easter-eggs.js, den useriøse delen
    Skru av/på og endre innhold i CONFIG under.
    ============================================================ */
 (() => {
