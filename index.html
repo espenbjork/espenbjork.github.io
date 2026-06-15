@@ -60,13 +60,9 @@
         <path d="M52 298 C8 232 58 150 138 168 C214 186 206 288 150 306 C90 324 62 244 122 204 C190 160 298 178 300 256 C303 320 244 362 206 322 C248 300 250 148 300 108 C338 78 372 96 392 152" />
       </svg>
       <h1 class="hero__title" id="hero-tittel">
-        Jeg bygger <em>enkle</em>, morsomme og av&nbsp;og&nbsp;til
+        Jeg bygger <em>enkle</em>, morsomme og av og til
         <span class="hero__strike">ubrukelige</span> produkter, som løser alt og ingenting.
       </h1>
-      <div class="hero__actions">
-        <a class="btn btn--primary" href="#arbeid">Se arbeidet</a>
-        <a class="btn btn--ghost" href="#kontakt">Ta kontakt</a>
-      </div>
     </section>
 
     <!-- ── Arbeid ─────────────────────────────────────────── -->
@@ -74,94 +70,89 @@
       <div class="section__head">
         <h2 class="section__title" id="arbeid-tittel">Arbeid</h2>
         <p class="section__intro">
-          Småprosjekter bygget for moro skyld. Hvert kort har en
-          <strong>nytteverdi</strong>, et helt useriøst mål på hvor nyttig det faktisk er.
+          Småprosjekter bygget for moro skyld. Noen er nyttige, andre løser
+          ingenting. Repo og demo på hvert kort.
         </p>
       </div>
 
       <ul class="cards">
-        <li>
-          <a class="card" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">
-            <div class="card__top">
-              <h3 class="card__title">Gitarstemmer</h3>
-              <span class="card__arrow" aria-hidden="true">↗</span>
-            </div>
+        <li class="card">
+          <a class="card__media" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener" aria-label="Gitarstemmer på GitHub">
+            <img src="assets/screenshots/gitarstemmer.jpg" alt="Skjermbilde av Gitarstemmer-appen" loading="lazy" width="1000" height="650">
+          </a>
+          <div class="card__body">
+            <h3 class="card__title">Gitarstemmer</h3>
             <p class="card__desc">
               Native macOS-gitarstemmer. SwiftUI + Core Audio, Hz-nøyaktig
               deteksjon, med farger og piler som sier fra når du er i mål.
             </p>
-            <div class="card__meta">
-              <span class="tag">Swift</span>
-              <span class="nytteverdi" data-nytteverdi="71">
-                <span class="nytteverdi__label">nytteverdi</span>
-                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:71%"></span></span>
-                <span class="nytteverdi__pct">71&nbsp;%</span>
+            <div class="card__actions">
+              <span class="tag">Swift · macOS</span>
+              <span class="card__links">
+                <a href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">Repo ↗</a>
               </span>
             </div>
-          </a>
+          </div>
         </li>
 
-        <li>
-          <a class="card" href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">
-            <div class="card__top">
-              <h3 class="card__title">π-pugger</h3>
-              <span class="card__arrow" aria-hidden="true">↗</span>
-            </div>
+        <li class="card">
+          <a class="card__media" href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener" aria-label="π-pugger, åpne demo">
+            <img src="assets/screenshots/pi.jpg" alt="Skjermbilde av π-pugger" loading="lazy" width="1000" height="625">
+          </a>
+          <div class="card__body">
+            <h3 class="card__title">π-pugger</h3>
             <p class="card__desc">
               Lær desimalene i pi utenat. Til hva? Godt spørsmål. Pugg i vei,
               ett siffer av gangen.
             </p>
-            <div class="card__meta">
+            <div class="card__actions">
               <span class="tag">HTML</span>
-              <span class="nytteverdi" data-nytteverdi="9">
-                <span class="nytteverdi__label">nytteverdi</span>
-                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:9%"></span></span>
-                <span class="nytteverdi__pct">9&nbsp;%</span>
+              <span class="card__links">
+                <a href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">Repo ↗</a>
+                <a href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener">Demo ↗</a>
               </span>
             </div>
-          </a>
+          </div>
         </li>
 
-        <li>
-          <a class="card" href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">
-            <div class="card__top">
-              <h3 class="card__title">Dreamcast</h3>
-              <span class="card__arrow" aria-hidden="true">↗</span>
-            </div>
+        <li class="card">
+          <a class="card__media" href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener" aria-label="Dreamcast, åpne demo">
+            <img src="assets/screenshots/dreamcast.jpg" alt="Skjermbilde av Dreamcast" loading="lazy" width="1000" height="625">
+          </a>
+          <div class="card__body">
+            <h3 class="card__title">Dreamcast</h3>
             <p class="card__desc">
               Podkastspiller som legger på effekter så du sovner lettere.
               Halvt søvnhjelpemiddel, halvt unnskyldning for å ikke høre slutten.
             </p>
-            <div class="card__meta">
+            <div class="card__actions">
               <span class="tag">HTML</span>
-              <span class="nytteverdi" data-nytteverdi="22">
-                <span class="nytteverdi__label">nytteverdi</span>
-                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:22%"></span></span>
-                <span class="nytteverdi__pct">22&nbsp;%</span>
+              <span class="card__links">
+                <a href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">Repo ↗</a>
+                <a href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener">Demo ↗</a>
               </span>
             </div>
-          </a>
+          </div>
         </li>
 
-        <li>
-          <a class="card" href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">
-            <div class="card__top">
-              <h3 class="card__title">Fra mor til jord</h3>
-              <span class="card__arrow" aria-hidden="true">↗</span>
-            </div>
+        <li class="card">
+          <a class="card__media" href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener" aria-label="Fra mor til jord, åpne demo">
+            <img src="assets/screenshots/framortiljord.jpg" alt="Skjermbilde av Fra mor til jord" loading="lazy" width="1000" height="625">
+          </a>
+          <div class="card__body">
+            <h3 class="card__title">Fra mor til jord</h3>
             <p class="card__desc">
               To-do-liste for livets store begivenheter. Fra vugge til grav,
               ganske bokstavelig talt.
             </p>
-            <div class="card__meta">
+            <div class="card__actions">
               <span class="tag">HTML</span>
-              <span class="nytteverdi" data-nytteverdi="58">
-                <span class="nytteverdi__label">nytteverdi</span>
-                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:58%"></span></span>
-                <span class="nytteverdi__pct">58&nbsp;%</span>
+              <span class="card__links">
+                <a href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">Repo ↗</a>
+                <a href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener">Demo ↗</a>
               </span>
             </div>
-          </a>
+          </div>
         </li>
       </ul>
     </section>
