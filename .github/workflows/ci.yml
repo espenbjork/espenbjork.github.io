@@ -1,0 +1,22 @@
+name: CI — valider HTML
+
+# Rådgivende sjekk. Kjører på push og PR, men blokkerer IKKE deploy-workflowen.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hent koden
+        uses: actions/checkout@v4
+
+      - name: Sett opp Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Valider HTML
+        run: npx --yes html-validate index.html

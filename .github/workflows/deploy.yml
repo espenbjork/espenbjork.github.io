@@ -1,0 +1,40 @@
+name: Deploy til GitHub Pages
+
+# Publiserer siden på hver push til main. Ingen byggesteg — filene serveres som de er.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Rettigheter Pages-deploy trenger
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Kjør én deploy om gangen; avbryt eldre kjøringer i kø
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Hent koden
+        uses: actions/checkout@v4
+
+      - name: Sett opp Pages
+        uses: actions/configure-pages@v5
+
+      - name: Pakke opp artefakt (hele rota)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

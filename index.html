@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!--
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Du leser kildekoden. Imponerende.                            │
+  │  Easter-eggene bor i assets/js/easter-eggs.js (config øverst). │
+  │  Og ja — Konami funker:  ↑ ↑ ↓ ↓ ← → ← → B A                   │
+  └──────────────────────────────────────────────────────────────┘
+-->
+<html lang="no" data-motion="on" data-notes="on" data-eggs="on">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espen Bjørk · produktleder</title>
+  <meta name="description" content="Espen Bjørk – produktleder. Bygger enkle, morsomme og av og til ubrukelige produkter som løser alt og ingenting. Med AI som medbygger.">
+  <meta name="author" content="Espen Bjørk">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0d3527">
+
+  <!-- Open Graph / sosiale delinger -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:title" content="Espen Bjørk · produktleder">
+  <meta property="og:description" content="Bygger enkle, morsomme og av og til ubrukelige produkter som løser alt og ingenting. Med AI som medbygger.">
+  <meta property="og:url" content="https://espenbjork.github.io/">
+  <meta property="og:image" content="https://espenbjork.github.io/assets/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="canonical" href="https://espenbjork.github.io/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Skrifter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#hovedinnhold">Hopp til innhold</a>
+
+  <header class="site-header" id="toppen">
+    <nav class="nav" aria-label="Hovednavigasjon">
+      <a class="nav__brand" href="#toppen">
+        <span class="nav__mark" aria-hidden="true"></span>
+        Espen&nbsp;Bjørk
+      </a>
+      <ul class="nav__links">
+        <li><a href="#arbeid">Arbeid</a></li>
+        <li><a href="#erfaring">Erfaring</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="hovedinnhold">
+
+    <!-- ── Hero ───────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="hero-tittel">
+      <p class="hero__kicker">Produktleder · Oslo</p>
+      <h1 class="hero__title" id="hero-tittel">
+        Jeg bygger <em>enkle</em>, morsomme og av&nbsp;og&nbsp;til
+        <span class="hero__strike">ubrukelige</span> produkter
+        — som løser alt og ingenting.
+      </h1>
+      <p class="hero__lead">
+        På dagtid leder jeg produkt- og AI-leveranser. På fritiden lager jeg
+        ting ingen ba om. Begge deler med AI som medbygger.
+      </p>
+      <p class="margin-note hero__note" data-note>…den siste delen er den morsomste.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#arbeid">Se arbeidet</a>
+        <a class="btn btn--ghost" href="#kontakt">Ta kontakt</a>
+      </div>
+    </section>
+
+    <!-- ── Arbeid ─────────────────────────────────────────── -->
+    <section class="section section--work" id="arbeid" aria-labelledby="arbeid-tittel">
+      <div class="section__head">
+        <h2 class="section__title" id="arbeid-tittel">Arbeid</h2>
+        <p class="section__intro">
+          Småprosjekter bygget for moro skyld. Hvert kort har en
+          <strong>nytteverdi</strong> — et helt useriøst mål på hvor nyttig det faktisk er.
+        </p>
+      </div>
+
+      <ul class="cards">
+        <li>
+          <a class="card" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">
+            <div class="card__top">
+              <h3 class="card__title">Gitarstemmer</h3>
+              <span class="card__arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="card__desc">
+              Native macOS-gitarstemmer. SwiftUI + Core Audio, Hz-nøyaktig
+              deteksjon, med farger og piler som sier fra når du er i mål.
+            </p>
+            <div class="card__meta">
+              <span class="tag">Swift</span>
+              <span class="nytteverdi" data-nytteverdi="71">
+                <span class="nytteverdi__label">nytteverdi</span>
+                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:71%"></span></span>
+                <span class="nytteverdi__pct">71&nbsp;%</span>
+              </span>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">
+            <div class="card__top">
+              <h3 class="card__title">π-pugger</h3>
+              <span class="card__arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="card__desc">
+              Lær desimalene i pi utenat. Til hva? Godt spørsmål. Pugg i vei,
+              ett siffer av gangen.
+            </p>
+            <div class="card__meta">
+              <span class="tag">HTML</span>
+              <span class="nytteverdi" data-nytteverdi="9">
+                <span class="nytteverdi__label">nytteverdi</span>
+                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:9%"></span></span>
+                <span class="nytteverdi__pct">9&nbsp;%</span>
+              </span>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">
+            <div class="card__top">
+              <h3 class="card__title">Dreamcast</h3>
+              <span class="card__arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="card__desc">
+              Podkastspiller som legger på effekter så du sovner lettere.
+              Halvt søvnhjelpemiddel, halvt unnskyldning for å ikke høre slutten.
+            </p>
+            <div class="card__meta">
+              <span class="tag">HTML</span>
+              <span class="nytteverdi" data-nytteverdi="22">
+                <span class="nytteverdi__label">nytteverdi</span>
+                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:22%"></span></span>
+                <span class="nytteverdi__pct">22&nbsp;%</span>
+              </span>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a class="card" href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">
+            <div class="card__top">
+              <h3 class="card__title">Fra mor til jord</h3>
+              <span class="card__arrow" aria-hidden="true">↗</span>
+            </div>
+            <p class="card__desc">
+              To-do-liste for livets store begivenheter. Fra vugge til grav,
+              ganske bokstavelig talt.
+            </p>
+            <div class="card__meta">
+              <span class="tag">HTML</span>
+              <span class="nytteverdi" data-nytteverdi="58">
+                <span class="nytteverdi__label">nytteverdi</span>
+                <span class="nytteverdi__bar"><span class="nytteverdi__fill" style="--pct:58%"></span></span>
+                <span class="nytteverdi__pct">58&nbsp;%</span>
+              </span>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ── Erfaring ───────────────────────────────────────── -->
+    <section class="section section--cv" id="erfaring" aria-labelledby="erfaring-tittel">
+      <div class="section__head">
+        <h2 class="section__title" id="erfaring-tittel">Erfaring</h2>
+        <p class="section__intro">
+          Den seriøse delen. 7+ år med produkt, AI og litt juss på si.
+        </p>
+        <p class="margin-note" data-note>på jobb: voksen. på fritiden: se over.</p>
+      </div>
+
+      <ol class="timeline">
+        <li class="timeline__item">
+          <div class="timeline__when">okt 2025 – nå</div>
+          <div class="timeline__body">
+            <h3 class="timeline__role">Manager, Technology Management</h3>
+            <p class="timeline__org">Sopra Steria</p>
+            <p class="timeline__text">
+              Prosjektleder i et spesialisert AI-team som leverer skreddersydde
+              og egenutviklede SaaS-løsninger til kunder på tvers av bransjer.
+              Bygde om leveransemodellen fra konsulenttimer til produkt, og eide
+              leveransen ende til ende — fra salg og kontrakt til teknisk
+              leveranse og overlevering.
+            </p>
+          </div>
+        </li>
+
+        <li class="timeline__item">
+          <div class="timeline__when">nov 2024 – sep 2025</div>
+          <div class="timeline__body">
+            <h3 class="timeline__role">Lead Product Manager — Gen&nbsp;AI &amp; Emerging Technologies</h3>
+            <p class="timeline__org">DNB</p>
+            <p class="timeline__text">
+              Ledet utviklingen av generativ AI for personmarkedet i banken.
+              Koordinerte tverrfaglige team og leverte kundenære digitale
+              tjenester med målbar effekt på engasjement.
+            </p>
+          </div>
+        </li>
+
+        <li class="timeline__item">
+          <div class="timeline__when">feb 2020 – nov 2024</div>
+          <div class="timeline__body">
+            <h3 class="timeline__role">Product Manager — Retail Market Digital Channels</h3>
+            <p class="timeline__org">DNB</p>
+            <p class="timeline__text">
+              Ansvarlig for «Pengebruk», DNBs verktøy for personlig økonomi — i
+              en periode Europas nest mest brukte PFM-løsning. Optimaliserte
+              porteføljen og ledet veikart og innovasjon som kuttet driftskostnader.
+            </p>
+          </div>
+        </li>
+
+        <li class="timeline__item">
+          <div class="timeline__when">mai 2019 – feb 2020</div>
+          <div class="timeline__body">
+            <h3 class="timeline__role">Subject Matter Expert — New Business</h3>
+            <p class="timeline__org">DNB</p>
+            <p class="timeline__text">
+              Sikret etterlevelse av regelverk og støttet data scientists i å
+              bruke data effektivt. Innførte praksis for datakvalitet og
+              -forvaltning.
+            </p>
+          </div>
+        </li>
+
+        <li class="timeline__item">
+          <div class="timeline__when">aug 2018 – mai 2019</div>
+          <div class="timeline__body">
+            <h3 class="timeline__role">Product Owner — Banking Services</h3>
+            <p class="timeline__org">DNB</p>
+            <p class="timeline__text">
+              Utviklet moderne API-er oppå aldrende kjernebanksystemer. Jobbet
+              med sentrale bankfunksjoner som onboarding og AML.
+            </p>
+          </div>
+        </li>
+
+        <li class="timeline__item timeline__item--edu">
+          <div class="timeline__when">2013 – 2018</div>
+          <div class="timeline__body">
+            <h3 class="timeline__role">Utdanning</h3>
+            <p class="timeline__org">UiO &amp; Høgskolen i Molde</p>
+            <p class="timeline__text">
+              Bachelor i informasjonsteknologi — Universitetet i Oslo (Det
+              juridiske fakultet), 2016–2018. Bachelor i samfunnsvitenskap, juss
+              og administrasjon — Høgskolen i Molde, 2013–2016.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── Kontakt ────────────────────────────────────────── -->
+    <section class="section section--contact" id="kontakt" aria-labelledby="kontakt-tittel">
+      <h2 class="section__title" id="kontakt-tittel">Kontakt</h2>
+      <p class="contact__lead">
+        Har du et problem som trenger en løsning — eller en løsning som leter
+        etter et problem? Si fra.
+      </p>
+      <ul class="contact__links">
+        <li>
+          <a href="mailto:espen@betulae.net">
+            <span class="contact__type">E-post</span>
+            <span class="contact__value">espen@betulae.net</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/espenbjork" target="_blank" rel="noopener">
+            <span class="contact__type">GitHub</span>
+            <span class="contact__value">@espenbjork ↗</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span data-year>2026</span> Espen Bjørk. Bygget for hånd, med AI som medbygger.</p>
+    <p class="site-footer__hint" data-egg-hint>↑ ↑ ↓ ↓ ← → ← → B A</p>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/easter-eggs.js" defer></script>
+</body>
+</html>

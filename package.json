@@ -1,0 +1,16 @@
+{
+  "name": "espenbjork-portefolje",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personlig porteføljeside — statisk, uten byggesteg.",
+  "author": "Espen Bjørk <espen@betulae.net>",
+  "license": "UNLICENSED",
+  "homepage": "https://espenbjork.github.io/",
+  "scripts": {
+    "dev": "npx --yes serve@14 . -l 5173",
+    "preview": "npx --yes serve@14 . -l 5173",
+    "validate": "npx --yes html-validate index.html",
+    "format": "npx --yes prettier --write \"**/*.{html,css,js,json,md}\"",
+    "format:check": "npx --yes prettier --check \"**/*.{html,css,js,json,md}\""
+  }
+}

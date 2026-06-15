@@ -1,0 +1,15 @@
+# Avhengigheter (vi bruker npx, men i tilfelle)
+node_modules/
+package-lock.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Bygg / midlertidig
+dist/
+.cache/
+*.tmp
