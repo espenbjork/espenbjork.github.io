@@ -4,6 +4,10 @@
 (() => {
   "use strict";
 
+  /* Safari gjenoppretter ellers gammel scroll-posisjon og hopper til bunnen. Start alltid på topp. */
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  if (!location.hash) window.scrollTo(0, 0);
+
   const root = document.documentElement;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const motionOn = root.dataset.motion !== "off" && !reduceMotion;
