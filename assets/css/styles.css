@@ -120,30 +120,111 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 .hero{ padding-block:clamp(1.25rem, 4vw, 3rem) clamp(2.5rem,6vw,4rem); position:relative; }
 .hero > *{ position:relative; z-index:1; }
 
-/* Animert krussedull i det åpne feltet til høyre */
-.hero__squiggle{
-  position:absolute; z-index:0; pointer-events:none;
-  top:50%; right:clamp(-1rem, 2vw, 2.5rem);
-  width:clamp(240px, 30vw, 440px); height:auto;
-  color:var(--ink);
+/* ── Clippy: binders-assistenten i hero ──────────────────── */
+.clippy{
+  position:absolute; z-index:2;
+  top:50%; right:clamp(0rem, 3vw, 2.5rem);
   transform:translateY(-50%);
+  width:clamp(150px, 19vw, 215px);
 }
-.hero__squiggle path{
-  fill:none; stroke:currentColor; stroke-width:2.5;
+.clippy__char{
+  display:block; width:100%; padding:0; margin:0;
+  border:0; background:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.clippy__char:focus-visible .clippy__wire{ stroke:var(--accent); }
+.clippy__svg{ width:100%; height:auto; display:block; overflow:visible; }
+
+.clippy__wire{
+  fill:none; stroke:var(--ink); stroke-width:8;
   stroke-linecap:round; stroke-linejoin:round;
-  stroke-dasharray:1300; stroke-dashoffset:1300;
+  stroke-dasharray:1400; stroke-dashoffset:1400;
 }
-.is-ready .hero__squiggle path{ animation:squiggle-draw 2.8s var(--ease) forwards; }
-[data-motion="on"] .is-ready .hero__squiggle{ animation:squiggle-float 9s ease-in-out 2.6s infinite; }
-@keyframes squiggle-draw{ from{ stroke-dashoffset:1300; } to{ stroke-dashoffset:0; } }
-@keyframes squiggle-float{
-  0%,100%{ transform:translateY(-50%) rotate(0deg); }
-  50%{ transform:translateY(-53%) rotate(2.5deg); }
+.is-ready .clippy__wire{ animation:clippy-draw 1.8s var(--ease) forwards; }
+@keyframes clippy-draw{ to{ stroke-dashoffset:0; } }
+
+.clippy__face{ opacity:0; }
+.is-ready .clippy__face{ animation:clippy-face-in .5s var(--ease) 1.5s forwards; }
+@keyframes clippy-face-in{ to{ opacity:1; } }
+.clippy__eye{ fill:#f6f4ec; stroke:var(--ink); stroke-width:3; }
+.clippy__pupil{ fill:var(--ink); }
+.clippy__brow{ fill:none; stroke:var(--ink); stroke-width:5; stroke-linecap:round; }
+.clippy__eyes{ transform-box:fill-box; transform-origin:center; }
+.clippy__brow{ transform-box:fill-box; transform-origin:center bottom; }
+
+/* idle-liv: vipp + blunk + blikk + bryn, ulike perioder = organisk */
+[data-motion="on"] .is-ready .clippy__svg{
+  transform-origin:50% 82%;
+  animation:clippy-bob 3.6s ease-in-out 1.9s infinite;
 }
-@media (max-width:860px){ .hero__squiggle{ display:none; } }
+[data-motion="on"] .is-ready .clippy__eyes{ animation:clippy-blink 5s ease-in-out 2s infinite; }
+[data-motion="on"] .is-ready .clippy__pupil{ animation:clippy-look 8s ease-in-out 3s infinite; }
+[data-motion="on"] .is-ready .clippy__brow{ animation:clippy-brow 8s ease-in-out 3s infinite; }
+@keyframes clippy-bob{
+  0%,100%{ transform:translateY(0) rotate(-2.5deg); }
+  50%{ transform:translateY(-7px) rotate(2.5deg); }
+}
+@keyframes clippy-blink{ 0%,92%,100%{ transform:scaleY(1); } 96%{ transform:scaleY(.08); } }
+@keyframes clippy-look{ 0%,28%,72%,100%{ transform:translateX(0); } 40%,56%{ transform:translateX(5px); } }
+@keyframes clippy-brow{ 0%,34%,62%,100%{ transform:translateY(0); } 44%,54%{ transform:translateY(-4px); } }
+
+/* ── Snakkeboble ─────────────────────────────────────────── */
+.clippy__bubble{
+  position:absolute; z-index:3;
+  right:calc(100% - 34px); bottom:48%;
+  width:min(74vw, 265px);
+  background:var(--paper-2);
+  border:1.5px solid var(--ink);
+  border-radius:16px;
+  padding:.95rem 1.05rem .85rem;
+  box-shadow:0 16px 36px -18px rgba(22,48,42,.55);
+  transition:opacity .3s var(--ease), transform .3s var(--ease);
+}
+.is-ready .clippy[data-open="true"] .clippy__bubble{ animation:clippy-pop .45s var(--ease) 2.2s backwards; }
+@keyframes clippy-pop{ from{ opacity:0; transform:scale(.85) translateY(6px); } }
+.clippy[data-open="false"] .clippy__bubble{ opacity:0; transform:scale(.85) translateY(6px); pointer-events:none; }
+.clippy__bubble::after{
+  content:""; position:absolute; right:-7px; bottom:20px;
+  width:14px; height:14px; background:var(--paper-2);
+  border-right:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink);
+  transform:rotate(-45deg);
+}
+.clippy__close{
+  position:absolute; top:5px; right:8px; border:0; background:none;
+  cursor:pointer; font-size:1.25rem; line-height:1; color:var(--ink-3);
+}
+.clippy__close:hover{ color:var(--accent); }
+.clippy__hi{ font-size:.9rem; color:var(--ink-2); }
+.clippy__hi strong{ color:var(--ink); }
+.clippy__text{ font-family:var(--serif); font-size:1.18rem; line-height:1.15; margin-top:.15rem; }
+.clippy__chips{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.75rem; }
+.clippy__chip{
+  font-size:.8rem; font-weight:600; color:var(--ink);
+  background:var(--paper); border:1px solid var(--line-2);
+  border-radius:999px; padding:.25rem .65rem;
+  transition:border-color .2s var(--ease), color .2s var(--ease);
+}
+.clippy__chip:hover{ border-color:var(--accent); color:var(--accent); }
+.clippy__soon{ font-family:var(--hand); color:var(--accent); font-size:1.05rem; margin-top:.55rem; }
+
+@media (max-width:880px){
+  .clippy{
+    position:static; transform:none; width:100%; margin:2.5rem 0 0;
+    display:flex; flex-direction:column-reverse; align-items:center;
+  }
+  .clippy__char{ width:118px; }
+  .clippy__bubble{
+    position:static; transform:none; margin-top:1.3rem; max-width:300px;
+    left:auto; right:auto; top:auto; bottom:auto;
+  }
+  .clippy[data-open="false"] .clippy__bubble{ display:none; }
+  .clippy__bubble::after{ display:none; }
+  .is-ready .clippy[data-open="true"] .clippy__bubble{ animation:none; }
+}
 @media (prefers-reduced-motion:reduce){
-  .hero__squiggle path{ stroke-dashoffset:0; animation:none; }
-  .hero__squiggle{ animation:none; }
+  .clippy__wire{ stroke-dashoffset:0; }
+  .clippy__face{ opacity:1; }
+  .clippy__svg,.clippy__eyes,.clippy__pupil,.clippy__brow,.clippy__bubble{ animation:none !important; }
 }
 .hero__title{
   font-size:clamp(2.6rem, 1.8rem + 5.2vw, 5.6rem);

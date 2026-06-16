@@ -56,13 +56,41 @@
 
     <!-- ── Hero ───────────────────────────────────────────── -->
     <section class="hero" aria-labelledby="hero-tittel">
-      <svg class="hero__squiggle" viewBox="0 0 420 420" fill="none" aria-hidden="true" focusable="false">
-        <path d="M52 298 C8 232 58 150 138 168 C214 186 206 288 150 306 C90 324 62 244 122 204 C190 160 298 178 300 256 C303 320 244 362 206 322 C248 300 250 148 300 108 C338 78 372 96 392 152" />
-      </svg>
       <h1 class="hero__title" id="hero-tittel">
         Jeg bygger enkle, morsomme og
         <span class="hero__strike">ubrukelige</span> produkter.
       </h1>
+
+      <!-- Bindersen: Espens "assistent" (Clippy-hyllest). Chat kommer senere. -->
+      <div class="clippy" id="clippy" data-open="true">
+        <div class="clippy__bubble" id="clippy-bubble" role="status" aria-live="polite">
+          <button class="clippy__close" type="button" aria-label="Lukk meldingen">×</button>
+          <p class="clippy__hi">Hei, jeg er <strong>Espens assistent</strong>.</p>
+          <p class="clippy__text">Det ser ut som du vurderer å ansette en produktleder. Vil du ha hjelp?</p>
+          <div class="clippy__chips">
+            <a class="clippy__chip" href="#arbeid">Se prosjektene</a>
+            <a class="clippy__chip" href="#erfaring">Erfaringen</a>
+            <a class="clippy__chip" href="#kontakt">Ta kontakt</a>
+          </div>
+          <p class="clippy__soon">Snart kan jeg svare på ordentlig. Jobber med saken.</p>
+        </div>
+
+        <button class="clippy__char" type="button" aria-label="Snakk med Espens assistent" aria-controls="clippy-bubble" aria-expanded="true">
+          <svg class="clippy__svg" viewBox="0 0 220 320" fill="none" aria-hidden="true" focusable="false">
+            <path class="clippy__wire" d="M138 86 C138 55 78 55 78 86 L78 250 C78 285 150 285 150 250 L150 120 C150 92 100 92 100 120 L100 232" />
+            <g class="clippy__face">
+              <g class="clippy__eyes">
+                <ellipse class="clippy__eye" cx="96" cy="110" rx="16" ry="20" />
+                <ellipse class="clippy__eye" cx="140" cy="110" rx="16" ry="20" />
+                <circle class="clippy__pupil" cx="99" cy="114" r="6.5" />
+                <circle class="clippy__pupil" cx="143" cy="114" r="6.5" />
+              </g>
+              <path class="clippy__brow" d="M80 82 Q96 73 113 80" />
+              <path class="clippy__brow" d="M125 80 Q142 73 158 82" />
+            </g>
+          </svg>
+        </button>
+      </div>
     </section>
 
     <!-- ── Arbeid ─────────────────────────────────────────── -->
@@ -280,5 +308,6 @@
 
   <script src="assets/js/main.js?v=dev" defer></script>
   <script src="assets/js/easter-eggs.js?v=dev" defer></script>
+  <script src="assets/js/clippy.js?v=dev" defer></script>
 </body>
 </html>
