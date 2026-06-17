@@ -171,7 +171,7 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 /* ── Snakkeboble ─────────────────────────────────────────── */
 .clippy__bubble{
   position:absolute; z-index:3;
-  right:calc(100% - 34px); bottom:48%;
+  right:calc(100% - 34px); top:0;
   width:min(74vw, 265px);
   background:var(--paper-2);
   border:1.5px solid var(--ink);
@@ -184,7 +184,7 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 @keyframes clippy-pop{ from{ opacity:0; transform:scale(.85) translateY(6px); } }
 .clippy[data-open="false"] .clippy__bubble{ opacity:0; transform:scale(.85) translateY(6px); pointer-events:none; }
 .clippy__bubble::after{
-  content:""; position:absolute; right:-7px; bottom:20px;
+  content:""; position:absolute; right:-7px; top:22px;
   width:14px; height:14px; background:var(--paper-2);
   border-right:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink);
   transform:rotate(-45deg);
