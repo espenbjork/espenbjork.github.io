@@ -214,6 +214,7 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   margin-top:.6rem; padding-right:.15rem;
 }
 .clippy__msg{
+  position:relative;
   font-size:.95rem; line-height:1.3; max-width:90%;
   padding:.4rem .6rem; border-radius:13px; white-space:pre-wrap;
 }
@@ -222,9 +223,19 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   background:var(--brg);
   border-bottom-left-radius:4px;
 }
+.clippy__msg--bot::before{
+  content:""; position:absolute; left:-3px; bottom:8px;
+  width:9px; height:9px; background:var(--brg);
+  border-radius:1px; transform:rotate(45deg);
+}
 .clippy__msg--me{
   align-self:flex-end; color:var(--accent-ink); background:var(--accent);
   border-bottom-right-radius:4px;
+}
+.clippy__msg--me::before{
+  content:""; position:absolute; right:-3px; bottom:8px;
+  width:9px; height:9px; background:var(--accent);
+  border-radius:1px; transform:rotate(45deg);
 }
 .clippy__msg.is-thinking{ opacity:.55; letter-spacing:.18em; }
 
