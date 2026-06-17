@@ -61,13 +61,19 @@
         <span class="hero__strike">ubrukelige</span> produkter.
       </h1>
 
-      <!-- Bindersen: Espens "assistent" (Clippy-hyllest). Chat kommer senere. -->
+      <!-- Bindersen: Espens "assistent" (Clippy-hyllest). Chat lever i clippy.js. -->
       <div class="clippy" id="clippy" data-open="true">
         <div class="clippy__bubble" id="clippy-bubble" role="status" aria-live="polite">
           <button class="clippy__close" type="button" aria-label="Lukk meldingen">×</button>
-          <p class="clippy__hi">Hei, jeg er <strong>Espens assistent</strong>.</p>
-          <p class="clippy__text">Jeg er nesten like ubrukelig som den originale Clippy.</p>
-          <p class="clippy__soon">Snart kan jeg svare på ordentlig. Jobber med saken.</p>
+          <p class="clippy__hi">Hei, jeg er <strong>Espens assistent</strong>. Motvillig.</p>
+
+          <div class="clippy__log" id="clippy-log"></div>
+
+          <form class="clippy__form" id="clippy-form">
+            <input class="clippy__input" id="clippy-input" type="text" autocomplete="off"
+                   maxlength="500" placeholder="Spør om Espen…" aria-label="Spør Espens assistent">
+            <button class="clippy__send" type="submit" aria-label="Send spørsmål">↩</button>
+          </form>
         </div>
 
         <button class="clippy__char" type="button" aria-label="Snakk med Espens assistent" aria-controls="clippy-bubble" aria-expanded="true">
