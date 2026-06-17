@@ -218,15 +218,15 @@ ul,ol{ margin:0; padding:0; list-style:none; }
   padding:.4rem .6rem; border-radius:13px; white-space:pre-wrap;
 }
 .clippy__msg--bot{
-  align-self:flex-start; color:var(--ink);
-  background:var(--paper); border:1px solid var(--line-2);
+  align-self:flex-start; color:var(--on-green);
+  background:var(--brg);
   border-bottom-left-radius:4px;
 }
 .clippy__msg--me{
-  align-self:flex-end; color:#fff; background:var(--accent);
+  align-self:flex-end; color:var(--accent-ink); background:var(--accent);
   border-bottom-right-radius:4px;
 }
-.clippy__msg.is-thinking{ color:var(--ink-3); letter-spacing:.18em; }
+.clippy__msg.is-thinking{ opacity:.55; letter-spacing:.18em; }
 
 .clippy__form{ display:flex; gap:.4rem; margin-top:.65rem; }
 .clippy__input{
