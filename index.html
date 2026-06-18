@@ -96,94 +96,143 @@
 
     <!-- ── Arbeid ─────────────────────────────────────────── -->
     <section class="section section--work" id="arbeid" aria-labelledby="arbeid-tittel">
-      <div class="section__head">
-        <h2 class="section__title" id="arbeid-tittel">Prosjekter</h2>
-        <p class="section__intro">
-          Småprosjekter bygget for moro skyld. Noen er nyttige, andre løser
-          ingenting. Repo og demo på hvert kort.
-        </p>
+      <div class="section__head section__head--carousel">
+        <div class="section__head-main">
+          <h2 class="section__title" id="arbeid-tittel">Prosjekter</h2>
+          <p class="section__intro">
+            Småprosjekter bygget for moro skyld. Noen er nyttige, andre løser
+            ingenting. Bla sidelengs for flere, repo og demo på hvert kort.
+          </p>
+        </div>
+
+        <!-- Bla-knapper. Vises kun på desktop, og kun når det er noe å bla til (styres av main.js). -->
+        <div class="carousel__nav" data-carousel-nav hidden>
+          <button class="carousel__btn" type="button" data-dir="prev"
+                  aria-label="Bla til forrige prosjekter" disabled>
+            <span aria-hidden="true">←</span>
+          </button>
+          <button class="carousel__btn" type="button" data-dir="next"
+                  aria-label="Bla til flere prosjekter">
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
 
-      <ul class="cards">
-        <li class="card">
-          <a class="card__media" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener" aria-label="Gitarstemmer på GitHub">
-            <img src="assets/screenshots/gitarstemmer.jpg" alt="Skjermbilde av Gitarstemmer-appen" loading="lazy" width="1000" height="650">
-          </a>
-          <div class="card__body">
-            <h3 class="card__title">Gitarstemmer</h3>
-            <p class="card__desc">
-              Native macOS-gitarstemmer. SwiftUI + Core Audio, Hz-nøyaktig
-              deteksjon, med farger og piler som sier fra når du er i mål.
-            </p>
-            <div class="card__actions">
-              <span class="tag">Swift · macOS</span>
-              <span class="card__links">
-                <a href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">Repo ↗</a>
-              </span>
-            </div>
-          </div>
-        </li>
+      <!--
+        ┌─ REKKEFØLGE ──────────────────────────────────────────────┐
+        │ Kortene fylles KOLONNEVIS i 2 rader:                       │
+        │   kort 1 → øverst i kolonne 1   kort 2 → nederst i kol. 1  │
+        │   kort 3 → øverst i kolonne 2   kort 4 → nederst i kol. 2  │
+        │ Endre rekkefølge ved å flytte en hel <li class="card">.    │
+        │ Øverst i lista = vises først (øverst til venstre).         │
+        │ Nå: nyeste først, deretter fallende etter kompleksitet.    │
+        └────────────────────────────────────────────────────────────┘
+      -->
+      <div class="carousel" data-carousel>
+        <ul class="cards" id="prosjekt-karusell" tabindex="0" role="region"
+            aria-label="Prosjekter, bla sidelengs for å se flere">
 
-        <li class="card">
-          <a class="card__media" href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener" aria-label="π-pugger, åpne demo">
-            <img src="assets/screenshots/pi.jpg" alt="Skjermbilde av π-pugger" loading="lazy" width="1000" height="625">
-          </a>
-          <div class="card__body">
-            <h3 class="card__title">π-pugger</h3>
-            <p class="card__desc">
-              Lær desimalene i pi utenat. Til hva? Godt spørsmål. Pugg i vei,
-              ett siffer av gangen.
-            </p>
-            <div class="card__actions">
-              <span class="tag">HTML</span>
-              <span class="card__links">
-                <a href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">Repo ↗</a>
-                <a href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener">Demo ↗</a>
-              </span>
+          <li class="card">
+            <a class="card__media" href="https://espenbjork.github.io/transfervindu/" target="_blank" rel="noopener" aria-label="Transfervindu, åpne demo">
+              <img src="assets/screenshots/transfervindu.jpg" alt="Skjermbilde av Transfervindu" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="card__body">
+              <h3 class="card__title">Transfervindu</h3>
+              <p class="card__desc">
+                Sky Sports «Deadline Day» som bryllups-innslag: nedtelling,
+                breaking-banner, spillerkort og «DONE DEAL»-konfetti.
+              </p>
+              <div class="card__actions">
+                <span class="tag">HTML</span>
+                <span class="card__links">
+                  <a href="https://github.com/espenbjork/transfervindu" target="_blank" rel="noopener">Repo ↗</a>
+                  <a href="https://espenbjork.github.io/transfervindu/" target="_blank" rel="noopener">Demo ↗</a>
+                </span>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li class="card">
-          <a class="card__media" href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener" aria-label="Dreamcast, åpne demo">
-            <img src="assets/screenshots/dreamcast.jpg" alt="Skjermbilde av Dreamcast" loading="lazy" width="1000" height="625">
-          </a>
-          <div class="card__body">
-            <h3 class="card__title">Dreamcast</h3>
-            <p class="card__desc">
-              Podkastspiller som legger på effekter så du sovner lettere.
-              Halvt søvnhjelpemiddel, halvt unnskyldning for å ikke høre slutten.
-            </p>
-            <div class="card__actions">
-              <span class="tag">HTML</span>
-              <span class="card__links">
-                <a href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">Repo ↗</a>
-                <a href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener">Demo ↗</a>
-              </span>
+          <li class="card">
+            <a class="card__media" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener" aria-label="Gitarstemmer på GitHub">
+              <img src="assets/screenshots/gitarstemmer.jpg" alt="Skjermbilde av Gitarstemmer-appen" loading="lazy" width="1000" height="650">
+            </a>
+            <div class="card__body">
+              <h3 class="card__title">Gitarstemmer</h3>
+              <p class="card__desc">
+                Native macOS-gitarstemmer. SwiftUI + Core Audio, Hz-nøyaktig
+                deteksjon, med farger og piler som sier fra når du er i mål.
+              </p>
+              <div class="card__actions">
+                <span class="tag">Swift · macOS</span>
+                <span class="card__links">
+                  <a href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">Repo ↗</a>
+                </span>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li class="card">
-          <a class="card__media" href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener" aria-label="Fra mor til jord, åpne demo">
-            <img src="assets/screenshots/framortiljord.jpg" alt="Skjermbilde av Fra mor til jord" loading="lazy" width="1000" height="625">
-          </a>
-          <div class="card__body">
-            <h3 class="card__title">Fra mor til jord</h3>
-            <p class="card__desc">
-              To-do-liste for livets store begivenheter. Fra vugge til grav,
-              ganske bokstavelig talt.
-            </p>
-            <div class="card__actions">
-              <span class="tag">HTML</span>
-              <span class="card__links">
-                <a href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">Repo ↗</a>
-                <a href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener">Demo ↗</a>
-              </span>
+          <li class="card">
+            <a class="card__media" href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener" aria-label="Dreamcast, åpne demo">
+              <img src="assets/screenshots/dreamcast.jpg" alt="Skjermbilde av Dreamcast" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="card__body">
+              <h3 class="card__title">Dreamcast</h3>
+              <p class="card__desc">
+                Podkastspiller som legger på effekter så du sovner lettere.
+                Halvt søvnhjelpemiddel, halvt unnskyldning for å ikke høre slutten.
+              </p>
+              <div class="card__actions">
+                <span class="tag">HTML</span>
+                <span class="card__links">
+                  <a href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">Repo ↗</a>
+                  <a href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener">Demo ↗</a>
+                </span>
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
+          </li>
+
+          <li class="card">
+            <a class="card__media" href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener" aria-label="Fra mor til jord, åpne demo">
+              <img src="assets/screenshots/framortiljord.jpg" alt="Skjermbilde av Fra mor til jord" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="card__body">
+              <h3 class="card__title">Fra mor til jord</h3>
+              <p class="card__desc">
+                To-do-liste for livets store begivenheter. Fra vugge til grav,
+                ganske bokstavelig talt.
+              </p>
+              <div class="card__actions">
+                <span class="tag">HTML</span>
+                <span class="card__links">
+                  <a href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">Repo ↗</a>
+                  <a href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener">Demo ↗</a>
+                </span>
+              </div>
+            </div>
+          </li>
+
+          <li class="card">
+            <a class="card__media" href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener" aria-label="π-pugger, åpne demo">
+              <img src="assets/screenshots/pi.jpg" alt="Skjermbilde av π-pugger" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="card__body">
+              <h3 class="card__title">π-pugger</h3>
+              <p class="card__desc">
+                Lær desimalene i pi utenat. Til hva? Godt spørsmål. Pugg i vei,
+                ett siffer av gangen.
+              </p>
+              <div class="card__actions">
+                <span class="tag">HTML</span>
+                <span class="card__links">
+                  <a href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">Repo ↗</a>
+                  <a href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener">Demo ↗</a>
+                </span>
+              </div>
+            </div>
+          </li>
+
+        </ul>
+      </div>
     </section>
 
     <!-- ── Erfaring ───────────────────────────────────────── -->

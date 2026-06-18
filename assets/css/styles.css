@@ -311,12 +311,76 @@ ul,ol{ margin:0; padding:0; list-style:none; }
 .section__intro strong{ color:var(--ink); font-weight:600; }
 
 /* ============================================================
-   ARBEID, kort
+   ARBEID, prosjekt-karusell, 2 rader som scroller sidelengs
    ============================================================ */
-.cards{
-  display:grid; gap:1.5rem;
-  grid-template-columns:repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+/* Hode med plass til bla-knapper ute til høyre */
+.section__head--carousel{
+  max-width:none;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:1rem 2rem; flex-wrap:wrap;
 }
+.section__head--carousel .section__head-main{ max-width:60ch; }
+
+/* Bla-knapper, kun desktop (vises av main.js når det finnes mer å se) */
+.carousel__nav{ display:flex; gap:.6rem; flex-shrink:0; }
+.carousel__nav[hidden]{ display:none; }
+.carousel__btn{
+  inline-size:2.9rem; block-size:2.9rem;
+  display:grid; place-items:center;
+  font-size:1.15rem; line-height:1; color:var(--ink);
+  background:var(--paper-2); border:1px solid var(--line-2);
+  border-radius:50%; cursor:pointer;
+  transition:background-color .2s var(--ease), border-color .2s var(--ease),
+             color .2s var(--ease), transform .15s var(--ease), opacity .2s var(--ease);
+}
+.carousel__btn:hover{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.carousel__btn:active{ transform:scale(.9); }
+.carousel__btn:disabled{ opacity:.3; cursor:default; }
+.carousel__btn:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+/* Skall, holder kant-toningene som hinter «det er mer» */
+.carousel{ position:relative; }
+.carousel::before,
+.carousel::after{
+  content:""; position:absolute; top:0; bottom:0;
+  inline-size:clamp(1.4rem, 5vw, 3.2rem);
+  pointer-events:none; z-index:2; opacity:0;
+  transition:opacity .3s var(--ease);
+}
+.carousel::before{ left:0;  background:linear-gradient(to right, var(--paper), transparent); }
+.carousel::after { right:0; background:linear-gradient(to left,  var(--paper), transparent); }
+.carousel.can-left::before{ opacity:1; }
+.carousel.can-right::after{ opacity:1; }
+
+/* Selve sporet, 2 rader og uendelig mange kolonner, x-scroll med snap */
+.cards{
+  display:grid;
+  grid-auto-flow:column;
+  grid-template-rows:repeat(2, auto);
+  grid-auto-columns:clamp(270px, 80vw, 344px);
+  gap:1.5rem;
+  margin:0; padding:.9rem 0 2rem;          /* luft til hover-løft + scrollbar */
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:color-mix(in srgb, var(--accent) 60%, transparent) transparent;
+}
+.cards:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:var(--radius); }
+.cards::-webkit-scrollbar{ height:8px; }
+.cards::-webkit-scrollbar-track{ background:transparent; }
+.cards::-webkit-scrollbar-thumb{
+  background:color-mix(in srgb, var(--accent) 50%, transparent); border-radius:999px;
+}
+.cards::-webkit-scrollbar-thumb:hover{ background:var(--accent); }
+
+/* Skjul piler der sidelengs sveiping er naturlig (touch / smale skjermer) */
+@media (max-width:680px), (pointer:coarse){
+  .carousel__nav{ display:none; }
+}
+
+.card{ scroll-snap-align:start; }
 .card{
   display:flex; flex-direction:column; height:100%;
   background:var(--paper-2);
