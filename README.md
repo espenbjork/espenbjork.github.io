@@ -35,6 +35,9 @@ filer manuelt.
 ```
 .
 ├── index.html              # alt innholdet (semantisk markup)
+├── kortsveip/              # liten app: del kredittkortregninga ved å sveipe
+│   ├── index.html · styles.css · app.js
+│   └── favicon.svg
 ├── assets/
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
 │   ├── js/main.js           # reveal-on-scroll, småanimasjoner
@@ -58,6 +61,7 @@ filer manuelt.
 | Prosjektkort (Arbeid) | `<section id="arbeid">` i `index.html` |
 | Erfaring / CV | `<section id="erfaring">` i `index.html` |
 | Konami-oppførsel | `CONFIG`-blokken øverst i `assets/js/easter-eggs.js` |
+| Sveipeterskler, kategori-ikoner (Kortsveip) | `KONFIG`- og `KATEGORIER`-blokkene øverst i `kortsveip/app.js` |
 
 ## Kommandoer
 
@@ -66,6 +70,9 @@ npm run dev        # lokal forhåndsvisning på :5173
 npm run validate   # sjekk at HTML-en er gyldig (html-validate)
 npm run format     # formater alt med Prettier
 ```
+
+> Merk: filene her er håndformatert, og `npm run format` vil skrive om dem.
+> Kjør den bare hvis du faktisk vil ha Prettier-stilen.
 
 Alle scriptene kjører via `npx` og laster verktøyet ved behov, ingen
 `npm install` nødvendig.
@@ -79,6 +86,13 @@ Alle scriptene kjører via `npx` og laster verktøyet ved behov, ingen
 - **Validering:** `ci.yml` kjører `html-validate` på PR-er og pusher. Den er
   rådgivende og blokkerer *ikke* deploy, så en liten advarsel stopper deg aldri
   fra å publisere, men du ser den.
+
+### Underprosjekter
+
+`kortsveip/` ligger i samme repo og publiseres av samme deploy, som
+`espenbjork.github.io/kortsveip/`. Ingen ekstra oppsett: legg en mappe med en
+`index.html` i rota, så er den live. Husk `?v=dev` på CSS- og JS-lenkene, og
+legg fila til i `sed`-linja i `deploy.yml` hvis den skal cache-bustes.
 
 ### Eget domene
 
