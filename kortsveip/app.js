@@ -478,7 +478,7 @@ const DEMO = `Dato;Forklaring;Beløp;Valuta
 /* ─── 3. TILSTAND ───────────────────────────────────────── */
 
 const S = {
-  navn: { a: 'Meg', b: 'Samboer' },
+  navn: { a: 'Espen', b: 'Victoria' },
   betaler: 'a',
   poster: [],
   historikk: [],
