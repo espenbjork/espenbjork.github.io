@@ -35,8 +35,10 @@ filer manuelt.
 ```
 .
 ├── index.html              # alt innholdet (semantisk markup)
-├── kortsveip/              # liten app: del kredittkortregninga ved å sveipe
-│   ├── index.html · styles.css · app.js
+├── kortsveip/              # liten app: del regninga ved å sveipe utgiftene
+│   ├── index.html · styles.css
+│   ├── les.js              # xlsx/csv/tekst → liste med utgifter
+│   ├── app.js              # potter, sveiping, oppgjør, deling
 │   └── favicon.svg
 ├── assets/
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
@@ -61,7 +63,7 @@ filer manuelt.
 | Prosjektkort (Arbeid) | `<section id="arbeid">` i `index.html` |
 | Erfaring / CV | `<section id="erfaring">` i `index.html` |
 | Konami-oppførsel | `CONFIG`-blokken øverst i `assets/js/easter-eggs.js` |
-| Sveipeterskler, kategori-ikoner (Kortsveip) | `KONFIG`- og `KATEGORIER`-blokkene øverst i `kortsveip/app.js` |
+| Sveipeterskler, potter, kategori-ikoner (Kortsveip) | `KONFIG`, `PALETT` og `KATEGORIER` øverst i `kortsveip/app.js` |
 
 ## Kommandoer
 

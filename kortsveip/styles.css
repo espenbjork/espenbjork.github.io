@@ -295,17 +295,17 @@ main{ flex:1; width:min(100%, var(--maxw)); margin-inline:auto; padding:0 var(--
 }
 
 /* Stemplene som toner inn når du drar */
-.kort__stempel{
-  position:absolute; top:22%; padding:.25rem .7rem;
+.stempel{
+  position:absolute; top:22%; padding:.25rem .7rem; color:var(--sf, var(--ink-3));
   font-size:1.05rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
   border:3px solid currentColor; border-radius:9px; opacity:0;
   pointer-events:none; white-space:nowrap; max-width:72%;
   overflow:hidden; text-overflow:ellipsis;
 }
-.kort__stempel--a{ right:1.1rem; color:var(--a); transform:rotate(11deg); }
-.kort__stempel--b{ left:1.1rem;  color:var(--b); transform:rotate(-11deg); }
-.kort__stempel--shared{ left:50%; top:16%; color:var(--shared); transform:translateX(-50%) rotate(-3deg); }
-.kort__stempel--skip{ left:50%; top:auto; bottom:8%; color:var(--skip); transform:translateX(-50%); }
+.stempel--hoyre{ right:1.1rem; transform:rotate(11deg); }
+.stempel--venstre{ left:1.1rem;  transform:rotate(-11deg); }
+.stempel--opp{ left:50%; top:16%; transform:translateX(-50%) rotate(-3deg); }
+.stempel--ned{ left:50%; top:auto; bottom:8%; transform:translateX(-50%); }
 
 .tomt{ position:absolute; inset:0; display:grid; place-content:center; justify-items:center; gap:.6rem; text-align:center; padding:1rem; }
 .tomt__emoji{ font-size:2.6rem; }
@@ -320,11 +320,11 @@ main{ flex:1; width:min(100%, var(--maxw)); margin-inline:auto; padding:0 var(--
   border:1px solid var(--line-2); background:var(--card);
   transition:transform .12s var(--ease), background .15s, color .15s, border-color .15s;
 }
-.knapp:hover{ color:#fff; }
+.knapp{ border-color:color-mix(in srgb, var(--kf, var(--line-2)) 45%, transparent); }
+.knapp:hover{ color:#fff; background:var(--kf, var(--brg)); border-color:var(--kf, var(--brg)); }
 .knapp:active{ transform:translateY(2px); }
-.knapp--a:hover{ background:var(--a); border-color:var(--a); }
-.knapp--b:hover{ background:var(--b); border-color:var(--b); }
-.knapp--shared:hover{ background:var(--shared); border-color:var(--shared); }
+.knapp__pil{ color:var(--kf, inherit); }
+.knapp:hover .knapp__pil{ color:inherit; }
 .knapp__pil{ font-size:1.1rem; line-height:1; }
 .knapp__navn{
   font-size:.9rem; font-weight:500; max-width:100%;
@@ -434,3 +434,66 @@ main{ flex:1; width:min(100%, var(--maxw)); margin-inline:auto; padding:0 var(--
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
 }
+
+
+/* ============================================================
+   POTTER, ROLLER OG DELING (v2)
+   ============================================================ */
+.potter{ display:flex; flex-direction:column; gap:.45rem; margin-top:.9rem; }
+.pott{
+  display:flex; align-items:center; gap:.5rem;
+  border:1px solid var(--line); border-left:4px solid var(--pf, var(--line-2));
+  border-radius:10px; padding:.4rem .5rem .4rem .6rem; background:var(--paper-2);
+}
+.pott__retning{
+  flex:0 0 1.6rem; text-align:center; font-size:1rem; color:var(--pf, var(--ink-3));
+  font-weight:600; cursor:default;
+}
+.pott__navn{
+  flex:1 1 6rem; min-width:0; padding:.4rem .55rem;
+  background:var(--card); border:1px solid var(--line-2); border-radius:8px; font-size:.95rem;
+}
+.pott__type{
+  flex:0 0 auto; padding:.4rem .4rem; font-size:.82rem;
+  background:var(--card); border:1px solid var(--line-2); border-radius:8px;
+}
+.pott__bort{
+  flex:0 0 auto; width:1.9rem; height:1.9rem; border-radius:50%; cursor:pointer;
+  background:none; border:1px solid var(--line-2); color:var(--ink-3); font-size:1rem; line-height:1;
+}
+.pott__bort:hover:not(:disabled){ border-color:#a33a2a; color:#a33a2a; }
+.pott__bort:disabled{ opacity:.3; cursor:not-allowed; }
+
+.roller{ display:flex; flex-wrap:wrap; gap:1rem 1.5rem; margin-top:1.1rem; }
+.rolle{ flex:1 1 12rem; }
+.rolle .field__label{ margin-bottom:.4rem; }
+.chips{ display:flex; gap:.35rem; flex-wrap:wrap; }
+
+.panel__sum{ float:right; font-family:var(--sans); font-size:.9rem; color:var(--ink-2); }
+
+.tvist{
+  background:color-mix(in srgb, var(--accent) 14%, var(--paper));
+  border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius:10px; padding:.5rem .75rem; font-size:.88rem;
+}
+
+.kort__merker{ display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.7rem; }
+.merke{
+  font-size:.75rem; border:1px solid var(--line); background:var(--paper-2);
+  border-radius:999px; padding:.18rem .6rem; color:var(--ink-2);
+}
+.merke--sterk{ border-color:var(--mf, var(--line-2)); color:var(--mf, var(--ink)); font-weight:500; }
+.merke--andre{ border-style:dashed; }
+.merke--eier{ color:var(--ink-3); }
+
+.kontroller--ekstra{ flex-wrap:wrap; justify-content:center; }
+.kontroller--ekstra:empty{ display:none; }
+.btn--pott{
+  border:1px solid color-mix(in srgb, var(--kf, var(--line-2)) 50%, transparent);
+  color:var(--ink-2); font-size:.85rem; padding:.4rem .9rem;
+}
+.btn--pott:hover{ background:var(--kf); border-color:var(--kf); color:#fff; }
+
+.sum__linje{ font-size:.85rem; color:var(--ink-2); text-align:right; }
+.panel--deling{ margin-top:.5rem; }
+.panel--deling .field{ margin-top:.9rem; }
