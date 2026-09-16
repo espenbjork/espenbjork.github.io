@@ -19,4 +19,4 @@ jobs:
           node-version: 20
 
       - name: Valider HTML
-        run: npx --yes html-validate index.html
+        run: npx --yes html-validate index.html kortsveip/index.html
