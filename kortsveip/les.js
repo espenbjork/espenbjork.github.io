@@ -76,6 +76,9 @@ function serieTilDato(n) {
   return d.toISOString().slice(0, 10);
 }
 
+/** «31 . 08 . 26» → «31.08.26». Amex setter luft rundt punktumene. */
+const stramDato = (t) => String(t).replace(/(\d)\s*([./-])\s*(\d)/g, '$1$2$3');
+
 /** Tolker dato. Returnerer ISO (yyyy-mm-dd) eller null. */
 function tilDato(verdi) {
   if (verdi == null) return null;
@@ -83,7 +86,7 @@ function tilDato(verdi) {
   if (typeof verdi === 'number') {
     return Number.isInteger(verdi) && verdi > 20000 && verdi < 60000 ? serieTilDato(verdi) : null;
   }
-  const t = String(verdi).trim();
+  const t = stramDato(String(verdi).trim());
   if (!t) return null;
 
   const lag = (aa, mm, dd) => {
@@ -315,6 +318,8 @@ function finnKolonner(rader) {
    «540185******6963 | Victoria Steen». Vi noterer hvem radene under
    tilhører, så kortet kan vise det. */
 const KORTEIER = /^\d{4,6}\*{2,}\d{3,4}$/;
+// Amex: «Nye transaksjoner for Espen Bjørk Kort som slutter med 71019»
+const KORTEIER_LINJE = /^nye transaksjoner for\s+(.+?)(?:\s+kort som slutter.*)?$/i;
 
 function byggPost(rad, kol) {
   const hent = (i) => (i >= 0 && rad[i] != null ? rad[i] : '');
@@ -463,8 +468,18 @@ function lesTekst(rå, overstyr) {
   return foredle(forsøk[0]);
 }
 
-/** Leser en opplastet fil: regneark, CSV eller ren tekst. */
+/** Leser en opplastet fil: PDF, regneark, CSV eller ren tekst. */
 async function lesFil(fil, overstyr) {
+  if (/\.pdf$/i.test(fil.name) || /pdf/i.test(fil.type || '')) {
+    try {
+      const funn = lesPdfTekst(await lesPdfLinjer(await fil.arrayBuffer()));
+      if (!funn) return { feil: 'Fant ingen kjøp i PDF-en. Kopier gjerne teksten fra PDF-leseren og lim den inn i stedet.' };
+      return foredle(funn);
+    } catch (e) {
+      return { feil: e.message || 'Fikk ikke lest PDF-en.' };
+    }
+  }
+
   const erRegneark = /\.xlsx?$/i.test(fil.name)
     || /spreadsheet|excel/i.test(fil.type || '');
 
@@ -487,4 +502,209 @@ async function lesFil(fil, overstyr) {
     try { tekst = new TextDecoder('windows-1252').decode(buffer); } catch { /* behold utf-8 */ }
   }
   return lesTekst(tekst, overstyr);
+}
+
+/* ─── PDF ───────────────────────────────────────────────── */
+/* En PDF er objekter med komprimerte innholdsstrømmer. Vi blåser opp
+   strømmene, plukker ut teksten med posisjon, og setter den sammen til
+   linjer igjen. Det holder for fakturaer satt med ekte tekst. Skannede
+   PDF-er har ingen tekst å hente, og da sier vi fra. */
+
+/** Hele fila som latin-1-streng, så vi kan lete med vanlige regexer. */
+function somTekst(bytes) {
+  let ut = '';
+  const BIT = 0x8000;
+  for (let i = 0; i < bytes.length; i += BIT) {
+    ut += String.fromCharCode.apply(null, bytes.subarray(i, i + BIT));
+  }
+  return ut;
+}
+
+/**
+ * Pakker ut og beholder det som kom ut selv om strømmen ender i søppel.
+ * Mellom komprimerte data og «endstream» ligger det gjerne et linjeskift,
+ * og DecompressionStream kaster på det, der andre utpakkere bare ignorerer.
+ */
+async function blåsOpp(bytes, format) {
+  const ds = new DecompressionStream(format);
+  const skriver = ds.writable.getWriter();
+  skriver.write(bytes).catch(() => {});
+  skriver.close().catch(() => {});
+
+  const leser = ds.readable.getReader();
+  const deler = []; let lengde = 0;
+  try {
+    for (;;) {
+      const { value, done } = await leser.read();
+      if (done) break;
+      deler.push(value); lengde += value.length;
+    }
+  } catch { /* behold det vi rakk å få ut */ }
+
+  const ut = new Uint8Array(lengde);
+  let o = 0;
+  for (const d of deler) { ut.set(d, o); o += d.length; }
+  return ut;
+}
+
+/** Tar en PDF-strenglitteral og gir teksten. Takler \( \) og oktal. */
+function pdfStreng(rå) {
+  let ut = ''; let i = 0;
+  while (i < rå.length) {
+    const c = rå[i];
+    if (c === '\\' && i + 1 < rå.length) {
+      const n = rå[i + 1];
+      if (n >= '0' && n <= '7') {
+        let j = 1;
+        while (j < 3 && rå[i + 1 + j] >= '0' && rå[i + 1 + j] <= '7') j += 1;
+        ut += String.fromCharCode(parseInt(rå.slice(i + 1, i + 1 + j), 8));
+        i += 1 + j;
+        continue;
+      }
+      ut += ({ n: '\n', r: '\r', t: '\t', b: '\b', f: '\f' })[n] || n;
+      i += 2;
+      continue;
+    }
+    ut += c;
+    i += 1;
+  }
+  return ut;
+}
+
+// Td/TD flytter, Tm setter, Tj/TJ skriver.
+const PDFOPS = new RegExp(
+  '([-\\d.]+)\\s+([-\\d.]+)\\s+(Td|TD)'
+  + '|([-\\d.]+)\\s+([-\\d.]+)\\s+([-\\d.]+)\\s+([-\\d.]+)\\s+([-\\d.]+)\\s+([-\\d.]+)\\s+Tm'
+  + '|\\(((?:[^()\\\\]|\\\\.)*)\\)\\s*Tj'
+  + '|\\[((?:[^\\[\\]\\\\]|\\\\.)*)\\]\\s*TJ', 'g');
+
+/** Plukker ut (y, x, tekst) fra én innholdsstrøm. */
+function tekstBiter(innhold, side) {
+  const biter = [];
+  let x = 0; let y = 0;
+  PDFOPS.lastIndex = 0;
+  let m;
+  while ((m = PDFOPS.exec(innhold)) !== null) {
+    if (m[3]) { x += Number(m[1]); y += Number(m[2]); }
+    else if (m[9] !== undefined) { x = Number(m[8]); y = Number(m[9]); }
+    else if (m[10] !== undefined) biter.push({ side, y: Math.round(y * 10) / 10, x, t: pdfStreng(m[10]) });
+    else if (m[11] !== undefined) {
+      const deler = m[11].match(/\((?:[^()\\]|\\.)*\)/g) || [];
+      const t = deler.map((p) => pdfStreng(p.slice(1, -1))).join('');
+      if (t.trim()) biter.push({ side, y: Math.round(y * 10) / 10, x, t });
+    }
+  }
+  return biter;
+}
+
+/** Leser en PDF og gir tilbake tekstlinjer i leserekkefølge. */
+async function lesPdfLinjer(buffer) {
+  if (typeof DecompressionStream !== 'function') {
+    throw new Error('Nettleseren din kan ikke pakke ut PDF-er. Kopier teksten fra PDF-leseren og lim den inn i stedet.');
+  }
+  const hel = somTekst(new Uint8Array(buffer));
+  const biter = [];
+  let side = 0;
+  const re = /stream\r?\n/g;
+  let m;
+  while ((m = re.exec(hel)) !== null) {
+    const start = m.index + m[0].length;
+    const slutt = hel.indexOf('endstream', start);
+    if (slutt < 0) continue;
+    const bytes = Uint8Array.from(hel.slice(start, slutt), (c) => c.charCodeAt(0) & 0xff);
+    const ut = await blåsOpp(bytes, 'deflate');
+    if (!ut.length) continue;                      // bilder og annet ukomprimert hopper vi over
+    const innhold = somTekst(ut);
+    if (!/T[jJ]/.test(innhold)) continue;
+    biter.push(...tekstBiter(innhold, side));
+    side += 1;
+  }
+  if (!biter.length) {
+    throw new Error('Fant ingen tekst i PDF-en. Er den skannet, må du lime inn tallene i stedet.');
+  }
+
+  // Samle biter med samme y til linjer.
+  const grupper = new Map();
+  for (const b of biter) {
+    const n = `${b.side}|${b.y}`;
+    if (!grupper.has(n)) grupper.set(n, []);
+    grupper.get(n).push(b);
+  }
+  const linjer = Array.from(grupper.values())
+    .map((del) => {
+      const sortert = del.sort((a, b) => a.x - b.x);
+      return {
+        side: sortert[0].side,
+        y: sortert[0].y,
+        x: sortert[0].x,
+        tekst: sortert.map((d) => d.t).join(' ').replace(/\s+/g, ' ').trim(),
+      };
+    })
+    .filter((l) => l.tekst);
+
+  return sorterSpaltevis(linjer).map((l) => l.tekst);
+}
+
+/**
+ * Fakturaer settes gjerne i to spalter. Leser man radvis, blandes
+ * spaltene, og en overskrift som «Nye transaksjoner for Espen» havner
+ * midt i den andres kjøp. Vi finner spaltene ved å se etter tydelige
+ * hull mellom linjestartene, og leser en spalte om gangen.
+ */
+function sorterSpaltevis(linjer) {
+  const GAP = 50;   // punkter mellom to spalter
+  const perSide = new Map();
+  for (const l of linjer) {
+    if (!perSide.has(l.side)) perSide.set(l.side, []);
+    perSide.get(l.side).push(l);
+  }
+
+  const ut = [];
+  for (const side of Array.from(perSide.keys()).sort((a, b) => a - b)) {
+    const del = perSide.get(side);
+    const xer = Array.from(new Set(del.map((l) => l.x))).sort((a, b) => a - b);
+    const grenser = [];
+    for (let i = 1; i < xer.length; i += 1) {
+      if (xer[i] - xer[i - 1] > GAP) grenser.push(xer[i]);
+    }
+    const spalte = (x) => grenser.filter((g) => x >= g).length;
+    del.sort((a, b) => (spalte(a.x) - spalte(b.x)) || (b.y - a.y));
+    ut.push(...del);
+  }
+  return ut;
+}
+
+/**
+ * Tolker linjene fra en PDF-faktura. Her kreves dato på hver linje:
+ * en fakturaside er full av summer, rentetabeller og småtekst som
+ * ellers ville blitt lest som kjøp.
+ */
+function lesPdfTekst(linjer) {
+  const poster = [];
+  let eier = null;
+  for (const rå of linjer) {
+    const linje = stramDato(rå.replace(/[  ]/g, ' ').trim());
+    if (!linje) continue;
+
+    const eierTreff = KORTEIER_LINJE.exec(linje);
+    if (eierTreff) { eier = eierTreff[1].trim(); continue; }
+    // Kontogebyrer og innbetalinger hører til kontoen, ikke til forrige korteier.
+    if (/^(andre kontotransaksjoner|innbetalinger|gjeldende renter)/i.test(linje)) { eier = null; continue; }
+
+    const m = linje.match(/^(.*?)(?:^|\s)(-?\s?(?:kr\s*)?(?:\d{1,3}(?:[ .']\d{3})+|\d+)[.,]\d{2}\s*(?:kr|NOK)?-?)\s*$/i);
+    if (!m) continue;
+    const belop = tilTall(m[2]);
+    if (belop === null || belop === 0) continue;
+
+    let rest = m[1].trim();
+    const dm = rest.match(/^(\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?|\d{4}-\d{2}-\d{2})\s+/);
+    if (!dm) continue;                       // uten dato er det en sum- eller notatlinje
+    const dato = tilDato(dm[1]);
+    if (!dato) continue;
+    rest = rest.slice(dm[0].length).replace(/\s+/g, ' ').trim();
+    if (!/[a-zæøå]{2}/i.test(rest)) continue;
+
+    poster.push(eier ? { dato, tekst: rest, belop, eier } : { dato, tekst: rest, belop });
+  }
+  return poster.length ? { poster, kol: null, kilde: 'pdf' } : null;
 }

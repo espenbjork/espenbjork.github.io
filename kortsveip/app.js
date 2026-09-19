@@ -181,6 +181,8 @@ function retningFor(pottId) {
 /* ─── 3. TILSTAND ───────────────────────────────────────── */
 
 const S = {
+  fakturaer: [],        // {id, navn, kilde, antall, sum, fra, til}
+  periode: { fra: null, til: null },
   potter: standardPotter(),
   jeg: null,            // hvilken person-pott du er
   betaler: null,        // hvem som legger ut for hele regninga
@@ -195,11 +197,13 @@ const S = {
 let minne = {};        // kjedenøkkel → pottnavn, huskes på tvers av regninger
 let sisteRå = '';      // siste innlesing, for ny tolkning ved kolonnebytte
 let sisteFil = null;
+let sisteFilNavn = '';
 let importert = null;
 
 function lagre() {
   try {
     localStorage.setItem(KONFIG.lagerNokkel, JSON.stringify({
+      fakturaer: S.fakturaer, periode: S.periode,
       potter: S.potter, jeg: S.jeg, betaler: S.betaler, poster: S.poster,
       tvist: S.tvist, andre: S.andre, skjerm: S.skjerm,
     }));
@@ -213,13 +217,15 @@ function hentLagret() {
     minne = JSON.parse(localStorage.getItem(KONFIG.minneNokkel) || '{}') || {};
     const d = JSON.parse(localStorage.getItem(KONFIG.lagerNokkel) || 'null');
     if (!d || !Array.isArray(d.poster) || !d.poster.length) return false;
+    S.fakturaer = d.fakturaer || [];
+    S.periode = d.periode || { fra: null, til: null };
     S.potter = (d.potter && d.potter.length) ? d.potter : standardPotter();
     S.jeg = d.jeg || null;
     S.betaler = d.betaler || null;
     S.poster = d.poster;
     S.tvist = d.tvist || [];
     S.andre = d.andre || null;
-    S.skjerm = d.skjerm === 'oppgjor' ? 'oppgjor' : 'sveip';
+    S.skjerm = ['oppgjor', 'tidslinje'].includes(d.skjerm) ? d.skjerm : 'sveip';
     return true;
   } catch { return false; }
 }
@@ -227,10 +233,26 @@ function hentLagret() {
 const finn = (id) => S.poster.find((p) => p.id === id);
 const erTvist = (id) => S.tvist.includes(id);
 
+/** Er posten innenfor perioden som er valgt? */
+function iPeriode(p) {
+  if (!S.periode.fra && !S.periode.til) return true;
+  if (!p.dato) return false;
+  if (S.periode.fra && p.dato < S.periode.fra) return false;
+  if (S.periode.til && p.dato > S.periode.til) return false;
+  return true;
+}
+
+/**
+ * Postene periodevalget gjelder for. Sveiping, oppgjør og tidslinje
+ * ser alle den samme utvalgte bunken, så tallene aldri sier én ting
+ * ett sted og noe annet et annet.
+ */
+const aktivePoster = () => S.poster.filter(iPeriode);
+
 /** Køen: uenigheter først, så det som ikke er fordelt. */
 function koen() {
-  const tvist = S.tvist.map(finn).filter(Boolean);
-  const rest = S.poster.filter((p) => p.pott == null && !erTvist(p.id));
+  const tvist = S.tvist.map(finn).filter((p) => p && iPeriode(p));
+  const rest = aktivePoster().filter((p) => p.pott == null && !erTvist(p.id));
   return tvist.concat(rest);
 }
 
@@ -249,23 +271,29 @@ function minneFor(post) {
 
 /* ─── Skjermbytte ───────────────────────────────────────── */
 
-const skjermer = { start: '#skjerm-start', sveip: '#skjerm-sveip', oppgjor: '#skjerm-oppgjor' };
-const stegFor = { start: 'start', sveip: 'swipe', oppgjor: 'sum' };
+const skjermer = {
+  start: '#skjerm-start', sveip: '#skjerm-sveip',
+  oppgjor: '#skjerm-oppgjor', tidslinje: '#skjerm-tidslinje',
+};
+const REKKE = ['start', 'sveip', 'oppgjor', 'tidslinje'];
 
 function visSkjerm(navn) {
   S.skjerm = navn;
   for (const [k, sel] of Object.entries(skjermer)) $(sel).hidden = k !== navn;
-  const rekke = ['start', 'sveip', 'oppgjor'];
-  const naa = rekke.indexOf(navn);
+  const naa = REKKE.indexOf(navn);
   $$('.steps__item').forEach((el) => {
-    const i = rekke.indexOf(Object.keys(stegFor).find((k) => stegFor[k] === el.dataset.step));
+    const i = REKKE.indexOf(el.dataset.skjerm);
     el.removeAttribute('aria-current');
-    el.toggleAttribute('data-done', i < naa);
+    el.toggleAttribute('data-done', i < naa && i < 3);
+    el.disabled = !S.poster.length && el.dataset.skjerm !== 'start';
     if (i === naa) el.setAttribute('aria-current', 'step');
   });
   $('#knapp-nullstill').hidden = navn === 'start' && !S.poster.length;
+  $('#periode').hidden = navn === 'start' || !S.poster.length;
+  if (navn !== 'start') tegnPeriode();
   if (navn === 'sveip') tegnSveip();
   if (navn === 'oppgjor') tegnOppgjor();
+  if (navn === 'tidslinje') tegnTidslinje();
   window.scrollTo(0, 0);
   lagre();
 }
@@ -378,12 +406,12 @@ function oppdaterPottnavn() {
 
 async function lesInnFil(fil) {
   melding(`Leser ${fil.name} …`);
-  sisteFil = fil; sisteRå = '';
+  sisteFil = fil; sisteRå = ''; sisteFilNavn = fil.name;
   vis(await lesFil(fil));
 }
 
 function lesInnTekst(tekst, overstyr) {
-  sisteRå = tekst; sisteFil = null;
+  sisteRå = tekst; sisteFil = null; sisteFilNavn = '';
   vis(lesTekst(tekst, overstyr));
 }
 
@@ -438,7 +466,11 @@ function tegnForhandsvisning() {
 
   tegnKolonnevalg();
   tegnMinnevalg(poster);
+  const forste = S.poster.length === 0;
+  $('#knapp-start').hidden = !forste;
+  $('#knapp-legg-til').hidden = forste;
   $('#knapp-start').disabled = poster.length === 0;
+  $('#knapp-legg-til').disabled = poster.length === 0;
 }
 
 function tegnKolonnevalg() {
@@ -470,21 +502,206 @@ function tegnMinnevalg(poster) {
   }
 }
 
-function startSveiping() {
+/** Nøkkel for å kjenne igjen et kjøp vi allerede har lagt inn. */
+const postNokkel = (p) => `${p.dato}|${p.belop}|${p.tekst}`;
+
+function fakturaNavn() {
+  if (sisteFilNavn) {
+    return sisteFilNavn.replace(/\.[a-z0-9]+$/i, '').replace(/[_-]+/g, ' ').trim().slice(0, 40);
+  }
+  return `Limt inn ${new Date().toLocaleDateString('nb-NO')}`;
+}
+
+/**
+ * Legger postene til bunken. Er noe lagt inn fra før, hoppes det over,
+ * så samme faktura kan slippes inn to ganger uten å telle dobbelt.
+ */
+function leggTilPoster(forste) {
   const poster = aktuellePoster();
   if (!poster.length) return;
   const brukMinne = $('#bruk-minne').checked;
 
-  S.poster = poster.map((p) => ({ ...p, pott: brukMinne ? minneFor(p) : null }));
-  S.historikk = [];
-  S.tvist = [];
-  S.andre = null;
-  S.filter = 'alle';
+  const finnes = new Set(S.poster.map(postNokkel));
+  const nye = poster.filter((p) => !finnes.has(postNokkel(p)));
+  const duplikater = poster.length - nye.length;
+
+  if (!nye.length) {
+    melding(`Alle ${poster.length} kjøpene ligger inne fra før. Ingenting lagt til.`, 'feil');
+    return;
+  }
+
+  const datoer = nye.map((p) => p.dato).filter(Boolean).sort();
+  const faktura = {
+    id: `f${S.fakturaer.length + 1}-${Math.random().toString(36).slice(2, 6)}`,
+    navn: fakturaNavn(),
+    kilde: importert.kilde,
+    antall: nye.length,
+    sum: ore(nye.reduce((sum, p) => sum + p.belop, 0)),
+    fra: datoer[0] || null,
+    til: datoer[datoer.length - 1] || null,
+  };
+  S.fakturaer.push(faktura);
+  S.poster = S.poster.concat(nye.map((p) => ({
+    ...p, faktura: faktura.id, pott: brukMinne ? minneFor(p) : null,
+  })));
+
+  if (forste) { S.historikk = []; S.tvist = []; S.andre = null; S.filter = 'alle'; }
   importert = null;
+  sisteFilNavn = '';
   $('#forhandsvisning').hidden = true;
   $('#lim-inn').value = '';
-  melding('', '');
+  melding(duplikater ? `${nye.length} kjøp lagt til. ${duplikater} lå inne fra før.` : '', duplikater ? 'ok' : '');
+  tegnFakturaer();
   visSkjerm('sveip');
+}
+
+/* ─── Fakturaene i bunken ───────────────────────────────── */
+
+function tegnFakturaer() {
+  const panel = $('#faktura-panel');
+  panel.hidden = S.fakturaer.length === 0;
+  if (!S.fakturaer.length) return;
+
+  $('#faktura-sum').textContent = `${S.poster.length} kjøp · ${kr(S.poster.reduce((sum, p) => sum + p.belop, 0))}`;
+  const liste = $('#fakturaer');
+  liste.textContent = '';
+  S.fakturaer.forEach((f) => {
+    const li = document.createElement('li');
+    li.className = 'faktura';
+    li.innerHTML = '<span class="faktura__navn"></span><span class="faktura__meta"></span>'
+      + '<span class="faktura__sum"></span>';
+    li.children[0].textContent = f.navn;
+    li.children[1].textContent = `${f.antall} kjøp · ${f.fra ? `${visDato(f.fra)} – ${visDato(f.til)}` : 'uten datoer'}`;
+    li.children[2].textContent = kr(f.sum);
+
+    const bort = document.createElement('button');
+    bort.className = 'faktura__bort';
+    bort.type = 'button';
+    bort.textContent = '×';
+    bort.setAttribute('aria-label', `Fjern ${f.navn}`);
+    bort.addEventListener('click', () => {
+      if (!window.confirm(`Fjerne «${f.navn}» og de ${f.antall} kjøpene?`)) return;
+      S.poster = S.poster.filter((p) => p.faktura !== f.id);
+      S.fakturaer = S.fakturaer.filter((x) => x.id !== f.id);
+      S.tvist = S.tvist.filter((id) => finn(id));
+      lagre(); tegnFakturaer();
+      if (S.skjerm !== 'start') visSkjerm(S.poster.length ? S.skjerm : 'start');
+    });
+    li.append(bort);
+    liste.append(li);
+  });
+}
+
+/* ─── Perioden ──────────────────────────────────────────── */
+
+function settPeriode(fra, til) {
+  S.periode = { fra: fra || null, til: til || null };
+  S.tvist = S.tvist.filter((id) => { const p = finn(id); return p && iPeriode(p); });
+  lagre();
+  tegnPeriode();
+  if (S.skjerm === 'sveip') tegnSveip();
+  if (S.skjerm === 'oppgjor') tegnOppgjor();
+  if (S.skjerm === 'tidslinje') tegnTidslinje();
+}
+
+function tegnPeriode() {
+  const boks = $('#periode-chips');
+  boks.textContent = '';
+  const valg = [{ id: 'alt', navn: 'Hele bunken', fra: null, til: null }];
+  S.fakturaer.forEach((f) => { if (f.fra) valg.push({ id: f.id, navn: f.navn, fra: f.fra, til: f.til }); });
+
+  valg.forEach((v) => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.type = 'button';
+    b.textContent = v.navn;
+    b.setAttribute('aria-pressed', String(S.periode.fra === v.fra && S.periode.til === v.til));
+    b.addEventListener('click', () => settPeriode(v.fra, v.til));
+    boks.append(b);
+  });
+
+  $('#periode-fra').value = S.periode.fra || '';
+  $('#periode-til').value = S.periode.til || '';
+
+  const utenfor = S.poster.length - aktivePoster().length;
+  const note = $('#periode-note') || (() => {
+    const el = document.createElement('p');
+    el.className = 'periode__note';
+    el.id = 'periode-note';
+    $('#periode').append(el);
+    return el;
+  })();
+  note.textContent = utenfor
+    ? `${aktivePoster().length} av ${S.poster.length} kjøp er med. ${utenfor} ligger utenfor perioden.`
+    : '';
+}
+
+/* ─── Tidslinja ─────────────────────────────────────────── */
+
+function tegnTidslinje() {
+  const alle = aktivePoster().slice().sort((a, b) => String(a.dato).localeCompare(String(b.dato)));
+  const synlige = alle.filter((p) => S.filter === 'alle' || (p.pott || 'uten') === S.filter);
+
+  $('#tid-oppsummering').textContent = alle.length
+    ? `${alle.length} kjøp fra ${visDato(alle[0].dato, true)} til ${visDato(alle[alle.length - 1].dato, true)}, til sammen ${kr(alle.reduce((s, p) => s + p.belop, 0))}.`
+    : 'Ingen kjøp i denne perioden.';
+
+  // Filtre på pott, med antall innenfor perioden
+  const boks = $('#tid-filtre');
+  boks.textContent = '';
+  const antall = { uten: 0 };
+  alle.forEach((p) => { const k = p.pott || 'uten'; antall[k] = (antall[k] || 0) + 1; });
+  const valg = [{ id: 'alle', navn: `Alle (${alle.length})` }];
+  S.potter.forEach((pt) => valg.push({ id: pt.id, navn: `${pt.navn} (${antall[pt.id] || 0})` }));
+  if (antall.uten) valg.push({ id: 'uten', navn: `Ikke satt (${antall.uten})` });
+  valg.forEach((v) => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.type = 'button';
+    b.textContent = v.navn;
+    b.setAttribute('aria-pressed', String(S.filter === v.id));
+    b.addEventListener('click', () => { S.filter = v.id; tegnTidslinje(); });
+    boks.append(b);
+  });
+
+  // Gruppert på måned, med månedssum
+  const liste = $('#tid-liste');
+  liste.textContent = '';
+  const manedSum = new Map();
+  synlige.forEach((p) => {
+    const m = String(p.dato || '').slice(0, 7);
+    manedSum.set(m, ore((manedSum.get(m) || 0) + p.belop));
+  });
+
+  let maned = '';
+  synlige.forEach((p) => {
+    const m = String(p.dato || '').slice(0, 7);
+    if (m !== maned) {
+      maned = m;
+      const h = document.createElement('li');
+      h.className = 'tid__maned';
+      h.innerHTML = '<span></span><span></span>';
+      h.children[0].textContent = m
+        ? new Date(`${m}-01T12:00:00`).toLocaleDateString('nb-NO', { month: 'long', year: 'numeric' })
+        : 'Uten dato';
+      h.children[1].textContent = kr(manedSum.get(m) || 0);
+      liste.append(h);
+    }
+    const li = document.createElement('li');
+    li.className = 'tid__post';
+    li.style.setProperty('--linjefarge', pottFarge(p.pott));
+    li.innerHTML = '<span class="tid__dag"></span><span class="tid__navn"></span>'
+      + '<span class="tid__belop"></span><span class="tid__pott"></span>';
+    li.children[0].textContent = visDato(p.dato);
+    li.children[1].textContent = pentNavn(p.tekst);
+    li.children[1].title = p.tekst;
+    li.children[2].textContent = (p.belop < 0 ? '− ' : '') + kr(Math.abs(p.belop));
+    li.children[3].textContent = p.pott ? pottNavn(p.pott) : '—';
+    li.children[3].style.setProperty('--pf', pottFarge(p.pott));
+    liste.append(li);
+  });
+
+  $('#tid-melding').textContent = synlige.length ? '' : 'Ingen kjøp med dette filteret.';
 }
 
 /* ─── 5. SVEIPING ───────────────────────────────────────── */
@@ -580,7 +797,7 @@ function tegnStokk() {
   stack().hidden = ko.length === 0;
   $('#knapp-angre').disabled = S.historikk.length === 0;
 
-  const totalt = S.poster.length;
+  const totalt = aktivePoster().length;
   const gjort = totalt - ko.length;
   $('#framdrift-fill').style.width = totalt ? `${(gjort / totalt) * 100}%` : '0%';
   $('#framdrift-tall').textContent = `${gjort} av ${totalt}`;
@@ -909,7 +1126,7 @@ function beregn() {
   S.potter.forEach((p) => { perPott[p.id] = { sum: 0, antall: 0 }; });
   let usortert = { sum: 0, antall: 0 };
 
-  S.poster.forEach((p) => {
+  aktivePoster().forEach((p) => {
     if (!p.pott || !perPott[p.pott]) { usortert.sum = ore(usortert.sum + p.belop); usortert.antall += 1; return; }
     perPott[p.pott].sum = ore(perPott[p.pott].sum + p.belop);
     perPott[p.pott].antall += 1;
@@ -1003,7 +1220,7 @@ function tegnOppgjor() {
 function tegnFiltre(r) {
   const boks = $('#filtre');
   boks.textContent = '';
-  const valg = [{ id: 'alle', navn: `Alle (${S.poster.length})` }];
+  const valg = [{ id: 'alle', navn: `Alle (${aktivePoster().length})` }];
   S.potter.forEach((p) => valg.push({ id: p.id, navn: `${p.navn} (${r.perPott[p.id].antall})` }));
   if (r.usortert.antall) valg.push({ id: 'uten', navn: `Ikke satt (${r.usortert.antall})` });
 
@@ -1021,7 +1238,7 @@ function tegnFiltre(r) {
 function tegnRader() {
   const liste = $('#rader');
   liste.textContent = '';
-  const synlige = S.poster.filter((p) => S.filter === 'alle' || (p.pott || 'uten') === S.filter);
+  const synlige = aktivePoster().filter((p) => S.filter === 'alle' || (p.pott || 'uten') === S.filter);
 
   synlige.forEach((p) => {
     const li = document.createElement('li');
@@ -1065,7 +1282,7 @@ function tegnRader() {
 /* ─── Eksport ───────────────────────────────────────────── */
 
 function periode() {
-  const datoer = S.poster.map((p) => p.dato).filter(Boolean).sort();
+  const datoer = aktivePoster().map((p) => p.dato).filter(Boolean).sort();
   if (!datoer.length) return '';
   const fra = datoer[0]; const til = datoer[datoer.length - 1];
   return fra === til ? visDato(fra, true) : `${visDato(fra)} – ${visDato(til, true)}`;
@@ -1206,7 +1423,19 @@ function koble() {
     $('#kolonnevalg').open = true;
   }));
   $('#ta-med-innbetalinger').addEventListener('change', tegnForhandsvisning);
-  $('#knapp-start').addEventListener('click', startSveiping);
+  $('#knapp-start').addEventListener('click', () => leggTilPoster(true));
+  $('#knapp-legg-til').addEventListener('click', () => leggTilPoster(false));
+
+  // Klikkbar navigasjon mellom skjermene
+  $$('.steps__item').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.skjerm !== 'start' && !S.poster.length) return;
+    visSkjerm(b.dataset.skjerm);
+  }));
+
+  // Perioden
+  $('#periode-fra').addEventListener('change', () => settPeriode($('#periode-fra').value, S.periode.til));
+  $('#periode-til').addEventListener('change', () => settPeriode(S.periode.fra, $('#periode-til').value));
+  $('#periode-nullstill').addEventListener('click', () => settPeriode(null, null));
   $('#knapp-avbryt').addEventListener('click', () => {
     importert = null;
     $('#forhandsvisning').hidden = true;
@@ -1268,7 +1497,9 @@ function koble() {
   $('#knapp-nullstill').addEventListener('click', () => {
     if (!window.confirm('Nullstille og starte på en ny regning? Fordelingen forsvinner. Pottene og butikkene appen har lært, beholdes.')) return;
     S.poster = []; S.historikk = []; S.tvist = []; S.andre = null;
+    S.fakturaer = []; S.periode = { fra: null, til: null };
     importert = null;
+    tegnFakturaer();
     try { localStorage.removeItem(KONFIG.lagerNokkel); } catch { /* ignorer */ }
     $('#lim-inn').value = '';
     $('#forhandsvisning').hidden = true;
@@ -1299,6 +1530,7 @@ function start() {
   koble();
   const gjenopptatt = hentLagret();
   tegnPotter();
+  tegnFakturaer();
 
   // Delingslenke i adressefeltet: bruk den så snart regninga finnes.
   const hash = location.hash || '';

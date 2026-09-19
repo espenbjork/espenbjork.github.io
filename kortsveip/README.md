@@ -13,7 +13,9 @@ og det finnes ikke noe sted å sende den.
 
 | | |
 | --- | --- |
-| **Leser regninga** | Regneark (`.xlsx`), CSV, TSV eller limt inn tekst |
+| **Leser regninga** | PDF, regneark (`.xlsx`), CSV, TSV eller limt inn tekst |
+| **Flere fakturaer** | Legg inn regninger fra ulike kortleverandører side om side |
+| **Tidslinje** | Alt kronologisk, gruppert på måned, med filter på dato |
 | **Potter du velger selv** | Personer, felles, og «utenfor» for f.eks. jobbutgifter |
 | **Fire sveiperetninger** | → ← ↑ ↓, flere potter blir knapper under kortet |
 | **Husker butikker** | «Rema» havnet i Felles sist, så foreslås det neste gang |
@@ -27,15 +29,21 @@ og det finnes ikke noe sted å sende den.
 
 ### Innlesing
 
-Fire strategier prøves, og den som finner flest utgifter vinner:
+Fem strategier prøves, og den som finner flest utgifter vinner:
 
-1. **Regneark.** Xlsx er en zip med XML i. Sentralkatalogen leses for hånd,
+1. **PDF.** Innholdsstrømmene blåses opp, teksten plukkes ut med posisjon, og
+   settes sammen til linjer igjen. Fakturaer settes gjerne i to spalter, så
+   linjene sorteres spaltevis: leser man radvis, havner en overskrift som «Nye
+   transaksjoner for Espen» midt i den andres kjøp. Her kreves dato på hver
+   linje, ellers leses rentetabeller og småtekst som kjøp. Skannede PDF-er har
+   ingen tekst å hente, og da sier appen fra.
+2. **Regneark.** Xlsx er en zip med XML i. Sentralkatalogen leses for hånd,
    `sharedStrings.xml` og første ark blåses opp med `DecompressionStream`, og
    cellene plukkes ut med `DOMParser`. Ingen biblioteker.
-2. **Avgrenset tabell.** Gjetter skilletegn (`;` `\t` `,` `|`), finner
+3. **Avgrenset tabell.** Gjetter skilletegn (`;` `\t` `,` `|`), finner
    overskriftsrada, ellers gjettes kolonnene ut fra innholdet.
-3. **Linjer.** Én transaksjon per linje, limt fra nettbanken.
-4. **Blokker.** Loddrett lim der dato, tekst og beløp står under hverandre.
+4. **Linjer.** Én transaksjon per linje, limt fra nettbanken.
+5. **Blokker.** Loddrett lim der dato, tekst og beløp står under hverandre.
 
 Beløp tolkes både norsk og engelsk: `1 234,56`, `1.234,56`, `438.20`,
 `(120,00)`, `120,00-`. Er de fleste beløpene negative, snus fortegnet, så
@@ -43,9 +51,11 @@ utgifter alltid er positive videre. Datoer kan være tekst eller regnearkets
 dagnummer. Filer som ikke er UTF-8 leses om igjen som windows-1252, for norske
 bankeksporter er ofte latin-1.
 
-Fakturaer med flere kort har en rad per korteier
-(`540185******6963 | Victoria Steen`). Den fanges opp, og kortet viser hvem
-kjøpet gikk på. Det er et hint, ikke en fordeling: hvem som brukte kortet er
+Fakturaer med flere kort merker hvem kortet tilhører, enten som en egen rad
+(`540185******6963 | Victoria Steen`) eller som en overskrift («Nye
+transaksjoner for Espen Bjørk»). Begge fanges opp, og kortet viser hvem kjøpet
+gikk på. Kontogebyrer og innbetalinger nullstiller eieren, så de ikke havner på
+den som tilfeldigvis sto sist. Det er et hint, ikke en fordeling: hvem som brukte kortet er
 sjelden det samme som hvem utgiften er.
 
 ### Potter
@@ -65,6 +75,17 @@ Resten får knapper under kortet. Er det færre enn fire potter, blir ↓ til
 En ny pott blir `utenfor` som standard. En pott som feilaktig er `person` tar
 en andel av felles uten at det synes noe sted, mens en feil `utenfor` dukker
 opp som sitt eget kort i oppgjøret.
+
+### Flere fakturaer og perioden
+
+Bunken kan inneholde regninger fra flere kortleverandører. Hvert kjøp husker
+hvilken faktura det kom fra, og samme fil kan slippes inn to ganger uten å
+telle dobbelt: kjøp med samme dato, beløp og tekst hoppes over.
+
+Periodevalget øverst gjelder **overalt** — sveiping, oppgjør og tidslinje ser
+den samme utvalgte bunken. Det er med vilje: med to fakturaer i bunken ville et
+oppgjør over alt vært et oppgjør for ingenting spesielt. Står det et utvalg,
+sier linja under hvor mange kjøp som ligger utenfor.
 
 ### Oppgjøret
 
@@ -100,6 +121,7 @@ Når den andres lenke leses inn:
 | Kategori-ikoner | `KATEGORIER` i `app.js` |
 | Pottfarger | `PALETT` i `app.js` |
 | Kolonnegjenkjenning | `HODE` i `les.js` |
+| Spalteavstand i PDF-er | `GAP` i `sorterSpaltevis` i `les.js` |
 
 ## Taster
 
