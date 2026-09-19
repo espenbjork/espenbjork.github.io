@@ -41,15 +41,32 @@
       <span class="topbar__mark" aria-hidden="true"></span>
       Kortsveip
     </a>
-    <nav class="steps" aria-label="Framdrift">
-      <span class="steps__item" data-step="start" aria-current="step">1 Importer</span>
-      <span class="steps__item" data-step="swipe">2 Sveip</span>
-      <span class="steps__item" data-step="sum">3 Oppgjør</span>
+    <nav class="steps" aria-label="Skjermer">
+      <button class="steps__item" type="button" data-skjerm="start" aria-current="step">1 Importer</button>
+      <button class="steps__item" type="button" data-skjerm="sveip">2 Sveip</button>
+      <button class="steps__item" type="button" data-skjerm="oppgjor">3 Oppgjør</button>
+      <button class="steps__item" type="button" data-skjerm="tidslinje">Tidslinje</button>
     </nav>
     <button class="topbar__reset" type="button" id="knapp-nullstill" hidden>Ny regning</button>
   </header>
 
   <main id="hovedinnhold">
+
+    <!-- Periodevalget gjelder sveiping, oppgjør og tidslinje -->
+    <div class="periode" id="periode" hidden>
+      <div class="periode__chips" id="periode-chips" role="group" aria-label="Velg periode"></div>
+      <div class="periode__datoer">
+        <p class="field">
+          <label class="field__label" for="periode-fra">Fra</label>
+          <input class="field__input" type="date" id="periode-fra">
+        </p>
+        <p class="field">
+          <label class="field__label" for="periode-til">Til</label>
+          <input class="field__input" type="date" id="periode-til">
+        </p>
+        <button class="btn btn--ghost" type="button" id="periode-nullstill">Vis alt</button>
+      </div>
+    </div>
 
     <!-- ══ 1. IMPORT ═══════════════════════════════════════════════ -->
     <section class="screen screen--start" id="skjerm-start" aria-labelledby="start-tittel">
@@ -87,20 +104,29 @@
         </div>
       </div>
 
+      <div class="panel" id="faktura-panel" hidden>
+        <h2 class="panel__title">
+          Regninger
+          <span class="panel__sum" id="faktura-sum"></span>
+        </h2>
+        <ul class="fakturaer" id="fakturaer"></ul>
+        <p class="panel__hint">Legg til flere fakturaer under. Kjøp som allerede er lagt inn, hoppes over.</p>
+      </div>
+
       <div class="panel panel--drop" id="slippsone">
         <h2 class="panel__title">Legg inn regninga</h2>
         <p class="panel__hint">
-          Dra inn regnearket eller CSV-en banken gir deg, eller marker regninga
-          i nettbanken og lim den inn. Kortsveip finner ut av datoer, tekst og
-          beløp selv.
+          Dra inn fakturaen banken gir deg, PDF eller regneark, eller marker
+          regninga i nettbanken og lim den inn. Kortsveip finner ut av datoer,
+          tekst og beløp selv, og takler flere kortleverandører side om side.
         </p>
 
         <div class="dropzone" id="dropzone">
           <p class="dropzone__text">Dra fila hit</p>
-          <p class="dropzone__or">xlsx, csv eller txt</p>
+          <p class="dropzone__or">pdf, xlsx, csv eller txt</p>
           <label class="btn btn--primary" for="fil-input">Velg fil</label>
           <input class="visually-hidden" type="file" id="fil-input"
-                 accept=".xlsx,.xls,.csv,.txt,.tsv,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                 accept=".pdf,.xlsx,.xls,.csv,.txt,.tsv,application/pdf,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
         </div>
 
         <p class="field">
@@ -156,6 +182,7 @@
 
         <div class="panel__actions">
           <button class="btn btn--primary btn--big" type="button" id="knapp-start">Start sveipingen →</button>
+          <button class="btn btn--primary btn--big" type="button" id="knapp-legg-til" hidden>Legg til i bunken →</button>
           <button class="btn btn--ghost" type="button" id="knapp-avbryt">Nullstill</button>
         </div>
       </div>
@@ -247,6 +274,17 @@
 
       <div class="filtre" id="filtre" role="group" aria-label="Filtrer utgifter"></div>
       <ul class="rader" id="rader"></ul>
+    </section>
+
+    <!-- ══ 4. TIDSLINJE ════════════════════════════════════════════ -->
+    <section class="screen screen--tid" id="skjerm-tidslinje" aria-labelledby="tid-tittel" hidden>
+      <h1 class="sum__title" id="tid-tittel">Tidslinje</h1>
+      <p class="sum__hint" id="tid-oppsummering"></p>
+
+      <div class="filtre" id="tid-filtre" role="group" aria-label="Filtrer tidslinja"></div>
+
+      <ol class="tid" id="tid-liste"></ol>
+      <p class="melding" id="tid-melding"></p>
     </section>
   </main>
 
