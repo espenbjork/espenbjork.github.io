@@ -485,6 +485,7 @@ main{ flex:1; width:min(100%, var(--maxw)); margin-inline:auto; padding:0 var(--
 .merke--sterk{ border-color:var(--mf, var(--line-2)); color:var(--mf, var(--ink)); font-weight:500; }
 .merke--andre{ border-style:dashed; }
 .merke--eier{ color:var(--ink-3); }
+.merke--faktura{ color:var(--ink-3); border-style:dashed; }
 
 .kontroller--ekstra{ flex-wrap:wrap; justify-content:center; }
 .kontroller--ekstra:empty{ display:none; }
@@ -506,7 +507,12 @@ main{ flex:1; width:min(100%, var(--maxw)); margin-inline:auto; padding:0 var(--
   display:grid; grid-template-columns:1fr auto auto; gap:.15rem .7rem; align-items:baseline;
   background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:.55rem .7rem;
 }
-.faktura__navn{ font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.faktura__navn{
+  font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  cursor:pointer; text-decoration:underline; text-decoration-style:dotted;
+  text-underline-offset:3px; text-decoration-color:var(--line-2);
+}
+.faktura__navn:hover{ text-decoration-color:currentColor; }
 .faktura__meta{ grid-column:1; font-size:.78rem; color:var(--ink-3); }
 .faktura__sum{ grid-row:1/3; grid-column:2; font-variant-numeric:tabular-nums; align-self:center; }
 .faktura__bort{

@@ -13,3 +13,6 @@ Thumbs.db
 dist/
 .cache/
 *.tmp
+
+# Lokal utvikling
+.claude/

@@ -249,10 +249,19 @@ function iPeriode(p) {
  */
 const aktivePoster = () => S.poster.filter(iPeriode);
 
-/** Køen: uenigheter først, så det som ikke er fordelt. */
+/** Eldste først. Kjøp uten dato havner bakerst, som på tidslinja. */
+const etterDato = (a, b) => String(a.dato || '~').localeCompare(String(b.dato || '~'));
+
+/**
+ * Køen: uenigheter først, så det som ikke er fordelt, kronologisk.
+ * Ligger det flere regninger i bunken, blandes de til én tidsrekke,
+ * så du sveiper august én gang og ikke én regning av gangen.
+ */
 function koen() {
-  const tvist = S.tvist.map(finn).filter((p) => p && iPeriode(p));
-  const rest = aktivePoster().filter((p) => p.pott == null && !erTvist(p.id));
+  const tvist = S.tvist.map(finn).filter((p) => p && iPeriode(p)).sort(etterDato);
+  const rest = aktivePoster()
+    .filter((p) => p.pott == null && !erTvist(p.id))
+    .sort(etterDato);
   return tvist.concat(rest);
 }
 
@@ -506,10 +515,23 @@ function tegnMinnevalg(poster) {
 const postNokkel = (p) => `${p.dato}|${p.belop}|${p.tekst}`;
 
 function fakturaNavn() {
-  if (sisteFilNavn) {
-    return sisteFilNavn.replace(/\.[a-z0-9]+$/i, '').replace(/[_-]+/g, ' ').trim().slice(0, 40);
-  }
-  return `Limt inn ${new Date().toLocaleDateString('nb-NO')}`;
+  const grunn = sisteFilNavn
+    ? sisteFilNavn.replace(/\.[a-z0-9]+$/i, '').replace(/[_-]+/g, ' ').trim().slice(0, 40)
+    : `Limt inn ${new Date().toLocaleDateString('nb-NO')}`;
+  return unikt(grunn);
+}
+
+/**
+ * To regninger som heter det samme er to regninger du ikke kan skille,
+ * og da er både periodevalget og kryssene ubrukelige. Limer du inn to
+ * ganger samme dag, blir den andre «… (2)».
+ */
+function unikt(grunn) {
+  const tatt = new Set(S.fakturaer.map((f) => f.navn));
+  if (!tatt.has(grunn)) return grunn;
+  let n = 2;
+  while (tatt.has(`${grunn} (${n})`)) n += 1;
+  return `${grunn} (${n})`;
 }
 
 /**
@@ -571,6 +593,22 @@ function tegnFakturaer() {
     li.innerHTML = '<span class="faktura__navn"></span><span class="faktura__meta"></span>'
       + '<span class="faktura__sum"></span>';
     li.children[0].textContent = f.navn;
+    li.children[0].title = 'Trykk for å gi regninga et annet navn';
+    li.children[0].setAttribute('role', 'button');
+    li.children[0].tabIndex = 0;
+    const dopOm = () => {
+      const svar = window.prompt('Hva heter denne regninga?', f.navn);
+      if (svar == null) return;
+      const rent = svar.trim().slice(0, 40);
+      if (!rent || rent === f.navn) return;
+      f.navn = S.fakturaer.some((x) => x !== f && x.navn === rent) ? unikt(rent) : rent;
+      lagre(); tegnFakturaer(); tegnPeriode();
+      if (S.skjerm === 'sveip') tegnStokk();
+    };
+    li.children[0].addEventListener('click', dopOm);
+    li.children[0].addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dopOm(); }
+    });
     li.children[1].textContent = `${f.antall} kjøp · ${f.fra ? `${visDato(f.fra)} – ${visDato(f.til)}` : 'uten datoer'}`;
     li.children[2].textContent = kr(f.sum);
 
@@ -754,6 +792,12 @@ function lagKort(post, dybde) {
     if (farge) s.style.setProperty('--mf', farge);
     merker.append(s);
   };
+  // Med flere regninger i samme bunke er «hvilken regning» like nyttig
+  // som «hvems kort», for kortteksten alene sier det ikke.
+  if (S.fakturaer.length > 1) {
+    const f = S.fakturaer.find((x) => x.id === post.faktura);
+    if (f) merke(f.navn, null, 'merke--faktura');
+  }
   if (post.eier) merke(`${post.eier}s kort`, null, 'merke--eier');
   if (erTvist(post.id)) {
     merke(`Du: ${pottNavn(post.pott)}`, pottFarge(post.pott), 'merke--sterk');
