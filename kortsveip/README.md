@@ -91,10 +91,23 @@ Regninga får navn etter fila, eller «Limt inn <dato>» når den er limt. To li
 navn ville gjort både periodevalget og kryssene ubrukelige, så den andre blir
 «… (2)». Trykk på navnet i lista for å kalle den «Amex» i stedet.
 
+Etter hver import står kvitteringen øverst på importskjermen: «98
+transaksjoner funnet», og under den «68 fra SAS Mastercard og 33 fra Amex»,
+med hver regning listet med antall, datospenn og sum. Legger du til regning
+nummer to, blir appen stående på importskjermen i stedet for å hoppe videre,
+så du rekker å se at den kom inn.
+
 Periodevalget øverst gjelder **overalt**: sveiping, oppgjør og tidslinje ser
 den samme utvalgte bunken. Det er med vilje: med to fakturaer i bunken ville et
 oppgjør over alt vært et oppgjør for ingenting spesielt. Står det et utvalg,
 sier linja under hvor mange kjøp som ligger utenfor.
+
+Velger du en **regning**, filtreres det på selve regninga, ikke på datoene
+hennes. To kort for samme måned overlapper alltid i tid, så et datointervall
+kan ikke skille dem: «Amex» ville tatt med SAS-kjøpene som falt innenfor, og
+begge knappene ville vist et vilkårlig miks. Datofeltene er for utsnitt på
+tvers. En ny import nullstiller utvalget, ellers ville de nye kjøpene ligget
+skjult bak et filter du satte for noe annet.
 
 ### Oppgjøret
 

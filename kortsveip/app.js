@@ -182,7 +182,7 @@ function retningFor(pottId) {
 
 const S = {
   fakturaer: [],        // {id, navn, kilde, antall, sum, fra, til}
-  periode: { fra: null, til: null },
+  periode: { fra: null, til: null, faktura: null },
   potter: standardPotter(),
   jeg: null,            // hvilken person-pott du er
   betaler: null,        // hvem som legger ut for hele regninga
@@ -218,7 +218,7 @@ function hentLagret() {
     const d = JSON.parse(localStorage.getItem(KONFIG.lagerNokkel) || 'null');
     if (!d || !Array.isArray(d.poster) || !d.poster.length) return false;
     S.fakturaer = d.fakturaer || [];
-    S.periode = d.periode || { fra: null, til: null };
+    S.periode = d.periode || { fra: null, til: null, faktura: null };
     S.potter = (d.potter && d.potter.length) ? d.potter : standardPotter();
     S.jeg = d.jeg || null;
     S.betaler = d.betaler || null;
@@ -234,7 +234,14 @@ const finn = (id) => S.poster.find((p) => p.id === id);
 const erTvist = (id) => S.tvist.includes(id);
 
 /** Er posten innenfor perioden som er valgt? */
+/**
+ * To kort for samme måned overlapper alltid i tid, så et datointervall
+ * kan ikke skille dem: «Amex» ville tatt med SAS-kjøpene som falt innenfor.
+ * Velger du en regning, filtreres det derfor på selve regninga.
+ * Datofeltene er for når du vil ha et utsnitt på tvers av dem.
+ */
 function iPeriode(p) {
+  if (S.periode.faktura) return p.faktura === S.periode.faktura;
   if (!S.periode.fra && !S.periode.til) return true;
   if (!p.dato) return false;
   if (S.periode.fra && p.dato < S.periode.fra) return false;
@@ -568,13 +575,25 @@ function leggTilPoster(forste) {
   })));
 
   if (forste) { S.historikk = []; S.tvist = []; S.andre = null; S.filter = 'alle'; }
+  // Sto det et utvalg, ville de nye kjøpene falt utenfor uten å si fra
+  S.periode = { fra: null, til: null, faktura: null };
   importert = null;
   sisteFilNavn = '';
   $('#forhandsvisning').hidden = true;
   $('#lim-inn').value = '';
   melding(duplikater ? `${nye.length} kjøp lagt til. ${duplikater} lå inne fra før.` : '', duplikater ? 'ok' : '');
   tegnFakturaer();
-  visSkjerm('sveip');
+
+  // Første regning: rett i gang med å sveipe, det er det du kom for.
+  // Regning nummer to: bli stående, så du ser at den faktisk kom inn og
+  // hva bunken nå består av. Hopper vi videre her, rekker du aldri å se det.
+  if (forste) { visSkjerm('sveip'); return; }
+  visSkjerm('start');
+  // Kvitteringen står øverst på importskjermen, så den er i syne uten rulling
+  const kvi = $('#kvittering');
+  kvi.classList.remove('kvittering--ny');
+  void kvi.offsetWidth;
+  kvi.classList.add('kvittering--ny');
 }
 
 /* ─── Fakturaene i bunken ───────────────────────────────── */
@@ -585,6 +604,18 @@ function tegnFakturaer() {
   if (!S.fakturaer.length) return;
 
   $('#faktura-sum').textContent = `${S.poster.length} kjøp · ${kr(S.poster.reduce((sum, p) => sum + p.belop, 0))}`;
+
+  // Svart på hvitt at alt kom inn, og hvor mye hver regning bidro med.
+  // Uten den må du telle deg fram til om regning nummer to faktisk ble lest.
+  const antall = new Map();
+  S.poster.forEach((p) => antall.set(p.faktura, (antall.get(p.faktura) || 0) + 1));
+  const deler = S.fakturaer.map((f) => `${antall.get(f.id) || 0} fra ${f.navn}`);
+  $('#kvittering-tall').textContent = S.poster.length === 1
+    ? '1 transaksjon funnet'
+    : `${S.poster.length} transaksjoner funnet`;
+  $('#kvittering-fra').textContent = deler.length > 1
+    ? `${deler.slice(0, -1).join(', ')} og ${deler[deler.length - 1]}`
+    : (S.fakturaer.length === 1 ? `fra ${S.fakturaer[0].navn}` : '');
   const liste = $('#fakturaer');
   liste.textContent = '';
   S.fakturaer.forEach((f) => {
@@ -622,6 +653,8 @@ function tegnFakturaer() {
       S.poster = S.poster.filter((p) => p.faktura !== f.id);
       S.fakturaer = S.fakturaer.filter((x) => x.id !== f.id);
       S.tvist = S.tvist.filter((id) => finn(id));
+      // Et filter som peker på en regning som er borte, skjuler alt
+      if (S.periode.faktura === f.id) S.periode = { fra: null, til: null, faktura: null };
       lagre(); tegnFakturaer();
       if (S.skjerm !== 'start') visSkjerm(S.poster.length ? S.skjerm : 'start');
     });
@@ -632,8 +665,8 @@ function tegnFakturaer() {
 
 /* ─── Perioden ──────────────────────────────────────────── */
 
-function settPeriode(fra, til) {
-  S.periode = { fra: fra || null, til: til || null };
+function settPeriode(fra, til, faktura) {
+  S.periode = { fra: fra || null, til: til || null, faktura: faktura || null };
   S.tvist = S.tvist.filter((id) => { const p = finn(id); return p && iPeriode(p); });
   lagre();
   tegnPeriode();
@@ -645,16 +678,18 @@ function settPeriode(fra, til) {
 function tegnPeriode() {
   const boks = $('#periode-chips');
   boks.textContent = '';
-  const valg = [{ id: 'alt', navn: 'Hele bunken', fra: null, til: null }];
-  S.fakturaer.forEach((f) => { if (f.fra) valg.push({ id: f.id, navn: f.navn, fra: f.fra, til: f.til }); });
+  const valg = [{ id: null, navn: 'Hele bunken' }];
+  S.fakturaer.forEach((f) => valg.push({ id: f.id, navn: f.navn }));
 
   valg.forEach((v) => {
     const b = document.createElement('button');
     b.className = 'chip';
     b.type = 'button';
     b.textContent = v.navn;
-    b.setAttribute('aria-pressed', String(S.periode.fra === v.fra && S.periode.til === v.til));
-    b.addEventListener('click', () => settPeriode(v.fra, v.til));
+    const pa = v.id ? S.periode.faktura === v.id
+      : !S.periode.faktura && !S.periode.fra && !S.periode.til;
+    b.setAttribute('aria-pressed', String(pa));
+    b.addEventListener('click', () => settPeriode(null, null, v.id));
     boks.append(b);
   });
 
@@ -669,8 +704,11 @@ function tegnPeriode() {
     $('#periode').append(el);
     return el;
   })();
+  const valgt = S.periode.faktura && S.fakturaer.find((f) => f.id === S.periode.faktura);
   note.textContent = utenfor
-    ? `${aktivePoster().length} av ${S.poster.length} kjøp er med. ${utenfor} ligger utenfor perioden.`
+    ? (valgt
+      ? `Viser bare «${valgt.navn}»: ${aktivePoster().length} av ${S.poster.length} kjøp. De andre ${utenfor} er ikke borte, trykk «Hele bunken».`
+      : `${aktivePoster().length} av ${S.poster.length} kjøp er med. ${utenfor} ligger utenfor perioden.`)
     : '';
 }
 
@@ -1477,9 +1515,9 @@ function koble() {
   }));
 
   // Perioden
-  $('#periode-fra').addEventListener('change', () => settPeriode($('#periode-fra').value, S.periode.til));
-  $('#periode-til').addEventListener('change', () => settPeriode(S.periode.fra, $('#periode-til').value));
-  $('#periode-nullstill').addEventListener('click', () => settPeriode(null, null));
+  $('#periode-fra').addEventListener('change', () => settPeriode($('#periode-fra').value, S.periode.til, null));
+  $('#periode-til').addEventListener('change', () => settPeriode(S.periode.fra, $('#periode-til').value, null));
+  $('#periode-nullstill').addEventListener('click', () => settPeriode(null, null, null));
   $('#knapp-avbryt').addEventListener('click', () => {
     importert = null;
     $('#forhandsvisning').hidden = true;
@@ -1541,7 +1579,7 @@ function koble() {
   $('#knapp-nullstill').addEventListener('click', () => {
     if (!window.confirm('Nullstille og starte på en ny regning? Fordelingen forsvinner. Pottene og butikkene appen har lært, beholdes.')) return;
     S.poster = []; S.historikk = []; S.tvist = []; S.andre = null;
-    S.fakturaer = []; S.periode = { fra: null, til: null };
+    S.fakturaer = []; S.periode = { fra: null, til: null, faktura: null };
     importert = null;
     tegnFakturaer();
     try { localStorage.removeItem(KONFIG.lagerNokkel); } catch { /* ignorer */ }

@@ -84,6 +84,18 @@
         </p>
       </div>
 
+      <div class="panel" id="faktura-panel" hidden>
+        <h2 class="panel__title">
+          Regninger
+          <span class="panel__sum" id="faktura-sum"></span>
+        </h2>
+        <p class="kvittering" id="kvittering" role="status">
+          <span class="kvittering__tall" id="kvittering-tall"></span>
+          <span class="kvittering__fra" id="kvittering-fra"></span>
+        </p>
+        <ul class="fakturaer" id="fakturaer"></ul>
+        <p class="panel__hint">Legg til flere fakturaer under. Kjøp som allerede er lagt inn, hoppes over.</p>
+      </div>
       <div class="panel">
         <h2 class="panel__title">Pottene</h2>
         <p class="panel__hint" id="pott-hjelp"></p>
@@ -104,14 +116,6 @@
         </div>
       </div>
 
-      <div class="panel" id="faktura-panel" hidden>
-        <h2 class="panel__title">
-          Regninger
-          <span class="panel__sum" id="faktura-sum"></span>
-        </h2>
-        <ul class="fakturaer" id="fakturaer"></ul>
-        <p class="panel__hint">Legg til flere fakturaer under. Kjøp som allerede er lagt inn, hoppes over.</p>
-      </div>
 
       <div class="panel panel--drop" id="slippsone">
         <h2 class="panel__title">Legg inn regninga</h2>

@@ -507,6 +507,22 @@ main{ flex:1; width:min(100%, var(--maxw)); margin-inline:auto; padding:0 var(--
   display:grid; grid-template-columns:1fr auto auto; gap:.15rem .7rem; align-items:baseline;
   background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:.55rem .7rem;
 }
+.kvittering{
+  display:flex; flex-direction:column; gap:.15rem;
+  margin:0 0 .75rem; padding:.7rem .85rem;
+  background:var(--paper-2); border:1px solid var(--line);
+  border-left:4px solid var(--accent); border-radius:10px;
+}
+.kvittering__tall{ font-weight:600; font-size:1.05rem; }
+.kvittering__fra{ font-size:.85rem; color:var(--ink-2); }
+.kvittering__fra:empty{ display:none; }
+@keyframes kvitteringInn{
+  from{ background:color-mix(in srgb, var(--accent) 22%, var(--paper-2)); }
+  to{ background:var(--paper-2); }
+}
+.kvittering--ny{ animation:kvitteringInn 1.6s ease-out; }
+@media (prefers-reduced-motion:reduce){ .kvittering--ny{ animation:none; } }
+
 .faktura__navn{
   font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   cursor:pointer; text-decoration:underline; text-decoration-style:dotted;
