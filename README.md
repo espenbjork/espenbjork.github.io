@@ -37,8 +37,10 @@ filer manuelt.
 ├── index.html              # alt innholdet (semantisk markup)
 ├── kortsveip/              # liten app: del regninga ved å sveipe utgiftene
 │   ├── index.html · styles.css
+│   ├── kjerne.js           # stabile nøkler, avtrykk og avrunding
 │   ├── les.js              # xlsx/csv/tekst → liste med utgifter
 │   ├── app.js              # potter, sveiping, oppgjør, deling
+│   ├── tests/              # målrettede tester av parser og deling
 │   └── favicon.svg
 ├── assets/
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
@@ -69,7 +71,8 @@ filer manuelt.
 
 ```bash
 npm run dev        # lokal forhåndsvisning på :5173
-npm run validate   # sjekk at HTML-en er gyldig (html-validate)
+npm run validate   # sjekk begge HTML-sider og JavaScript-syntaks
+npm test           # kjør Kortsveip-testene
 npm run format     # formater alt med Prettier
 ```
 
@@ -85,7 +88,8 @@ Alle scriptene kjører via `npx` og laster verktøyet ved behov, ingen
 
 - **Hosting:** GitHub Pages, bygget fra GitHub Actions (ikke fra en branch).
 - **Trigger:** hver push til `main` (`.github/workflows/deploy.yml`).
-- **Validering:** `ci.yml` kjører `html-validate` på PR-er og pusher. Den er
+- **Validering:** `ci.yml` validerer begge HTML-sidene, sjekker
+  JavaScript-syntaks og kjører Kortsveip-testene på PR-er og pusher. Den er
   rådgivende og blokkerer *ikke* deploy, så en liten advarsel stopper deg aldri
   fra å publisere, men du ser den.
 
