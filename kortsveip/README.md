@@ -14,7 +14,7 @@ og det finnes ikke noe sted å sende den.
 | | |
 | --- | --- |
 | **Leser regninga** | PDF, regneark (`.xlsx`), CSV, TSV eller limt inn tekst |
-| **Flere fakturaer** | Legg inn regninger fra ulike kortleverandører side om side |
+| **Flere fakturaer** | Legg inn regninger fra ulike kortleverandører, blandet til én kronologisk bunke |
 | **Tidslinje** | Alt kronologisk, gruppert på måned, med filter på dato |
 | **Potter du velger selv** | Personer, felles, og «utenfor» for f.eks. jobbutgifter |
 | **Fire sveiperetninger** | → ← ↑ ↓, flere potter blir knapper under kortet |
@@ -82,7 +82,16 @@ Bunken kan inneholde regninger fra flere kortleverandører. Hvert kjøp husker
 hvilken faktura det kom fra, og samme fil kan slippes inn to ganger uten å
 telle dobbelt: kjøp med samme dato, beløp og tekst hoppes over.
 
-Periodevalget øverst gjelder **overalt** — sveiping, oppgjør og tidslinje ser
+Sveipebunken er **kronologisk på tvers av regningene**, ikke én regning av
+gangen. Har du SAS Mastercard og Amex for samme måned, sveiper du august én
+gang, i den rekkefølgen kjøpene faktisk skjedde. Kjøp uten dato havner bakerst.
+Ligger det mer enn én regning i bunken, viser kortet hvilken det kom fra.
+
+Regninga får navn etter fila, eller «Limt inn <dato>» når den er limt. To like
+navn ville gjort både periodevalget og kryssene ubrukelige, så den andre blir
+«… (2)». Trykk på navnet i lista for å kalle den «Amex» i stedet.
+
+Periodevalget øverst gjelder **overalt**: sveiping, oppgjør og tidslinje ser
 den samme utvalgte bunken. Det er med vilje: med to fakturaer i bunken ville et
 oppgjør over alt vært et oppgjør for ingenting spesielt. Står det et utvalg,
 sier linja under hvor mange kjøp som ligger utenfor.
