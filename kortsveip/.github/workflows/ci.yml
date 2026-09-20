@@ -1,13 +1,12 @@
-name: CI, valider HTML
+name: Test Felleskortet
 
-# Rådgivende sjekk. Kjører på push og PR, men blokkerer IKKE deploy-workflowen.
 on:
   push:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  validate:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Hent koden
@@ -19,7 +18,7 @@ jobs:
           node-version: 20
 
       - name: Valider HTML og JavaScript
-        run: npm run validate
+        run: npx --yes html-validate index.html && node --check kjerne.js && node --check les.js && node --check app.js
 
-      - name: Test Felleskortet
-        run: npm test
+      - name: Kjør tester
+        run: node --test tests/*.test.js
