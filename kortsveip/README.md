@@ -33,12 +33,27 @@ Frivillig produktstatistikk sender bare anonyme hendelsesnavn og tellinger; se
 
 Fem strategier prøves, og den som finner flest utgifter vinner:
 
-1. **PDF.** Innholdsstrømmene blåses opp, teksten plukkes ut med posisjon, og
-   settes sammen til linjer igjen. Fakturaer settes gjerne i to spalter, så
-   linjene sorteres spaltevis: leser man radvis, havner en overskrift som «Nye
-   transaksjoner for Espen» midt i den andres kjøp. Her kreves dato på hver
-   linje, ellers leses rentetabeller og småtekst som kjøp. Skannede PDF-er har
-   ingen tekst å hente, og da sier appen fra.
+1. **PDF.** Innholdsstrømmene blåses opp, teksten plukkes ut med posisjon,
+   og settes sammen til linjer igjen.
+
+   `BT` nullstiller tekstmatrisen, og `Td` flytter relativt til forrige
+   linjestart. Uten nullstillingen driver koordinatene av gårde, hver celle
+   får sin egen y, og ingen rader settes sammen. Fakturaer satt med `Tm`
+   (absolutte koordinater) skjuler feilen, de som bruker `Td` røper den.
+
+   Fakturaer settes gjerne i to spalter, så linjene sorteres spaltevis:
+   leser man radvis, havner en overskrift som «Nye transaksjoner for Espen»
+   midt i den andres kjøp. Her kreves dato på hver linje, ellers leses
+   rentetabeller og betalingseksempler som kjøp. Skannede PDF-er har ingen
+   tekst å hente, og da sier appen fra.
+
+   Tegnsettet tas i to trinn. PDF-er satt med StandardEncoding legger æ og ø
+   andre steder enn latin-1. Bokstaver som mangler helt i grunnsettet, som å,
+   tegnes med en egen CID-font der byteparene er glyfnumre; de oversettes med
+   dokumentets ToUnicode-kart. Er to kart uenige om en kode, dropper vi den
+   heller enn å gjette feil.
+
+
 2. **Regneark.** Xlsx er en zip med XML i. Sentralkatalogen leses for hånd,
    `sharedStrings.xml` og første ark blåses opp med `DecompressionStream`, og
    cellene plukkes ut med `DOMParser`. Ingen biblioteker.
