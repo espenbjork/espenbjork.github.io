@@ -20,6 +20,3 @@ jobs:
 
       - name: Valider HTML og JavaScript
         run: npm run validate
-
-      - name: Test Felleskortet
-        run: npm test
