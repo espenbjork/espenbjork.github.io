@@ -35,13 +35,8 @@ filer manuelt.
 ```
 .
 ├── index.html              # alt innholdet (semantisk markup)
-├── kortsveip/              # liten app: del regninga ved å sveipe utgiftene
-│   ├── index.html · styles.css
-│   ├── kjerne.js           # stabile nøkler, avtrykk og avrunding
-│   ├── les.js              # xlsx/csv/tekst → liste med utgifter
-│   ├── app.js              # potter, sveiping, oppgjør, deling
-│   ├── tests/              # målrettede tester av parser og deling
-│   └── favicon.svg
+├── kortsveip/              # videresending til felleskortet.no, holder gamle lenker i live
+│   └── index.html
 ├── assets/
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
 │   ├── js/main.js           # reveal-on-scroll, småanimasjoner
@@ -65,7 +60,7 @@ filer manuelt.
 | Prosjektkort (Arbeid) | `<section id="arbeid">` i `index.html` |
 | Erfaring / CV | `<section id="erfaring">` i `index.html` |
 | Konami-oppførsel | `CONFIG`-blokken øverst i `assets/js/easter-eggs.js` |
-| Sveipeterskler, potter, kategori-ikoner (Kortsveip) | `KONFIG`, `PALETT` og `KATEGORIER` øverst i `kortsveip/app.js` |
+| Felleskortet (appen) | eget repo: [espenbjork/felleskortet](https://github.com/espenbjork/felleskortet) |
 
 ## Kommandoer
 
@@ -89,16 +84,24 @@ Alle scriptene kjører via `npx` og laster verktøyet ved behov, ingen
 - **Hosting:** GitHub Pages, bygget fra GitHub Actions (ikke fra en branch).
 - **Trigger:** hver push til `main` (`.github/workflows/deploy.yml`).
 - **Validering:** `ci.yml` validerer begge HTML-sidene, sjekker
-  JavaScript-syntaks og kjører Kortsveip-testene på PR-er og pusher. Den er
+  JavaScript-syntaks på PR-er og pusher. Den er
   rådgivende og blokkerer *ikke* deploy, så en liten advarsel stopper deg aldri
   fra å publisere, men du ser den.
 
 ### Underprosjekter
 
-`kortsveip/` ligger i samme repo og publiseres av samme deploy, som
-`espenbjork.github.io/kortsveip/`. Ingen ekstra oppsett: legg en mappe med en
+Felleskortet lå en periode som en kopi under `kortsveip/` her. Appen har sitt
+eget repo, [espenbjork/felleskortet](https://github.com/espenbjork/felleskortet),
+som publiserer `felleskortet.no` — og to kopier av samme app drev fra hverandre
+helt til den utlagte versjonen ikke lenger leste fakturaer den andre kopien
+leste fint. Nå finnes appen ett sted. `kortsveip/index.html` står igjen som en
+videresending, slik at gamle lenker og delte oppgjør fortsatt virker; den tar
+`#`-delen med seg videre.
+
+Vil du legge et nytt underprosjekt her, holder det å legge en mappe med en
 `index.html` i rota, så er den live. Husk `?v=dev` på CSS- og JS-lenkene, og
-legg fila til i `sed`-linja i `deploy.yml` hvis den skal cache-bustes.
+legg fila til i `sed`-linja i `deploy.yml` hvis den skal cache-bustes. Blir det
+noe mer enn en liten demo, gi det heller sitt eget repo med en gang.
 
 ### Eget domene
 

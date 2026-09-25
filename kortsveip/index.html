@@ -1,325 +1,45 @@
 <!DOCTYPE html>
 <!--
-  ┌──────────────────────────────────────────────────────────────────┐
-  │  Felleskortet, del regninga ved å sveipe hver utgift i en pott.   │
-  │  Ingen backend. Regninga blir liggende i din egen nettleser.      │
-  │  Innlesing: les.js · resten: app.js (KONFIG-blokka øverst).       │
-  └──────────────────────────────────────────────────────────────────┘
+  Felleskortet bodde her før. Appen har fått sitt eget repo,
+  espenbjork/felleskortet, som publiserer felleskortet.no.
+
+  Denne sida står igjen bare for å holde gamle lenker i live. Viktigst er
+  delingslenkene: et helt oppgjør ligger i #-delen av adressen, så den må
+  følge med videre. Derfor gjøres videresendinga i JavaScript og ikke med
+  «meta refresh», som ville mistet den. Appen krever uansett JavaScript,
+  og uten det står lenka synlig på sida.
 -->
-<html lang="no" data-motion="on">
+<html lang="no">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Felleskortet · del regninga ved å sveipe</title>
-  <meta name="description" content="Last opp månedens regning, sveip hver utgift i en pott du har valgt selv, og få et ferdig oppgjør. Alt skjer i nettleseren din.">
-  <meta name="author" content="Espen Bjørk">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#0d3527">
-
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="nb_NO">
-  <meta property="og:title" content="Felleskortet · del regninga ved å sveipe">
-  <meta property="og:description" content="Last opp månedens regning, sveip hver utgift i en pott, og få et ferdig oppgjør.">
-  <meta property="og:url" content="https://felleskortet.no/">
-  <meta property="og:image" content="https://felleskortet.no/favicon.svg">
-  <meta name="twitter:card" content="summary_large_image">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Felleskortet har flyttet</title>
+  <meta name="robots" content="noindex">
   <link rel="canonical" href="https://felleskortet.no/">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-
-  <link rel="stylesheet" href="styles.css?v=dev">
+  <style>
+    body {
+      margin: 0; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      line-height: 1.55; color: #16302a; background: #e6e9df;
+    }
+    main { max-width: 32rem; padding: 2rem; text-align: center; }
+    h1 { font-family: Iowan Old Style, Baskerville, Georgia, serif; font-weight: 400; }
+    a { color: #0d3527; }
+  </style>
 </head>
 <body>
-  <a class="skip-link" href="#hovedinnhold">Hopp til innhold</a>
-
-  <header class="topbar">
-    <a class="topbar__brand" href="./">
-      <span class="topbar__mark" aria-hidden="true"></span>
-      Felleskortet
-    </a>
-    <nav class="steps" aria-label="Skjermer">
-      <button class="steps__item" type="button" data-skjerm="start" aria-current="step">1 Importer</button>
-      <button class="steps__item" type="button" data-skjerm="sveip">2 Sveip</button>
-      <button class="steps__item" type="button" data-skjerm="oppgjor">3 Oppgjør</button>
-      <button class="steps__item" type="button" data-skjerm="tidslinje">Tidslinje</button>
-    </nav>
-    <button class="topbar__reset" type="button" id="knapp-nullstill" hidden>Ny regning</button>
-  </header>
-
-  <main id="hovedinnhold">
-
-    <!-- Periodevalget gjelder sveiping, oppgjør og tidslinje -->
-    <div class="periode" id="periode" hidden>
-      <div class="periode__chips" id="periode-chips" role="group" aria-label="Velg periode"></div>
-      <div class="periode__datoer">
-        <p class="field">
-          <label class="field__label" for="periode-fra">Fra</label>
-          <input class="field__input" type="date" id="periode-fra">
-        </p>
-        <p class="field">
-          <label class="field__label" for="periode-til">Til</label>
-          <input class="field__input" type="date" id="periode-til">
-        </p>
-        <button class="btn btn--ghost" type="button" id="periode-nullstill">Vis alt</button>
-      </div>
-    </div>
-
-    <!-- ══ 1. IMPORT ═══════════════════════════════════════════════ -->
-    <section class="screen screen--start" id="skjerm-start" aria-labelledby="start-tittel">
-      <div class="intro">
-        <h1 class="intro__title" id="start-tittel">Sveip regninga,<br>få oppgjøret.</h1>
-        <p class="intro__lede">
-          Last opp månedens regning, sveip hver utgift i en pott du har valgt
-          selv, og få et ferdig oppgjør. Har begge sveipet hver for seg, viser
-          appen hva dere er uenige om.
-        </p>
-        <p class="intro__privacy">
-          <span aria-hidden="true">🔒</span>
-          Regninger, beløp og fordelinger blir i nettleseren din. Hvis du
-          frivillig sier ja til anonym bruksstatistikk, teller vi bare hvilke
-          funksjoner som brukes.
-        </p>
-      </div>
-
-      <div class="panel panel--mottatt" id="deling-mottatt" hidden>
-        <p class="panel__eyebrow">Delt med deg</p>
-        <h2 class="panel__title" id="deling-mottatt-tittel">Et oppgjør er klart</h2>
-        <p class="panel__hint" id="deling-mottatt-info"></p>
-        <p class="deling-valg">
-          Godta fordelingen for å gå rett til oppgjøret, eller fordel selv.
-          Da viser Felleskortet bare kjøpene dere er uenige om etterpå.
-        </p>
-        <div class="panel__actions">
-          <button class="btn btn--primary btn--big" type="button" id="knapp-godta-deling">Godta fordelingen</button>
-          <button class="btn btn--ghost btn--big" type="button" id="knapp-fordel-selv">Fordel selv</button>
-        </div>
-        <p class="melding" id="deling-mottatt-melding" role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="panel" id="faktura-panel" hidden>
-        <h2 class="panel__title">
-          Regninger
-          <span class="panel__sum" id="faktura-sum"></span>
-        </h2>
-        <p class="kvittering" id="kvittering" role="status">
-          <span class="kvittering__tall" id="kvittering-tall"></span>
-          <span class="kvittering__fra" id="kvittering-fra"></span>
-        </p>
-        <ul class="fakturaer" id="fakturaer"></ul>
-        <p class="panel__hint">Legg til så mange fakturaer du vil. Sveipingen starter først når du ber om det.</p>
-        <div class="panel__actions">
-          <button class="btn btn--primary btn--big" type="button" id="knapp-start-sveip">Start sveipingen →</button>
-        </div>
-      </div>
-      <div class="panel" id="oppsett-panel">
-        <h2 class="panel__title">Pottene</h2>
-        <p class="panel__hint" id="pott-hjelp"></p>
-        <ul class="potter" id="potter"></ul>
-        <div class="panel__actions">
-          <button class="btn btn--ghost" type="button" id="legg-til-pott">+ Legg til pott</button>
-        </div>
-
-        <div class="roller">
-          <div class="rolle">
-            <p class="field__label" id="betaler-merkelapp">Hvem legger ut for hele regninga?</p>
-            <div class="chips" id="betaler-valg" role="group" aria-labelledby="betaler-merkelapp"></div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="panel panel--drop" id="slippsone">
-        <h2 class="panel__title">Legg inn regninga</h2>
-        <p class="panel__hint">
-          Velg eller dra inn én eller flere fakturaer fra banken, eller marker
-          en regning i nettbanken og lim den inn. Felleskortet legger alt i én
-          bunke før du starter sveipingen.
-        </p>
-
-        <div class="dropzone" id="dropzone">
-          <p class="dropzone__text">Dra filene hit</p>
-          <p class="dropzone__or">pdf, xlsx, csv eller txt</p>
-          <label class="btn btn--primary" for="fil-input">Velg filer</label>
-          <input class="visually-hidden" type="file" id="fil-input" multiple
-                 accept=".pdf,.xlsx,.csv,.txt,.tsv,application/pdf,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-          <p class="dropzone__hint">Gamle .xls-filer må lagres som .xlsx eller CSV først.</p>
-        </div>
-
-        <p class="field">
-          <label class="field__label" for="lim-inn">Lim inn i stedet</label>
-          <textarea class="field__input field__input--area" id="lim-inn" rows="4"
-                    spellcheck="false"
-                    placeholder="12.03.2025&#9;REMA 1000 GRUNERLOKKA&#9;-438,20"></textarea>
-        </p>
-
-        <div class="panel__actions">
-          <button class="btn btn--primary" type="button" id="knapp-les">Les inn</button>
-          <button class="btn btn--ghost" type="button" id="knapp-demo">Prøv med eksempeldata</button>
-        </div>
-
-        <p class="melding" id="melding" role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="panel panel--preview" id="forhandsvisning" hidden>
-        <h2 class="panel__title">
-          Fant <span id="antall-funnet">0</span> utgifter
-          <span class="panel__sum" id="sum-funnet"></span>
-        </h2>
-
-        <details class="kolonner" id="kolonnevalg" hidden>
-          <summary>Feil kolonner? Juster her</summary>
-          <div class="field-row field-row--three">
-            <p class="field">
-              <label class="field__label" for="kol-dato">Dato</label>
-              <select class="field__input" id="kol-dato"></select>
-            </p>
-            <p class="field">
-              <label class="field__label" for="kol-tekst">Tekst</label>
-              <select class="field__input" id="kol-tekst"></select>
-            </p>
-            <p class="field">
-              <label class="field__label" for="kol-belop">Beløp</label>
-              <select class="field__input" id="kol-belop"></select>
-            </p>
-          </div>
-        </details>
-
-        <ul class="preview" id="preview-liste"></ul>
-
-        <p class="preview__note" id="filtrert-note" hidden></p>
-        <label class="sjekk" id="sjekk-innbetalinger" hidden>
-          <input type="checkbox" id="ta-med-innbetalinger">
-          <span>Ta med innbetalinger og gebyrer også</span>
-        </label>
-        <label class="sjekk" id="sjekk-minne" hidden>
-          <input type="checkbox" id="bruk-minne">
-          <span id="minne-tekst"></span>
-        </label>
-
-        <div class="panel__actions">
-          <button class="btn btn--primary btn--big" type="button" id="knapp-legg-til">Legg til regninga →</button>
-          <button class="btn btn--ghost" type="button" id="knapp-avbryt">Nullstill</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ 2. SVEIP ════════════════════════════════════════════════ -->
-    <section class="screen screen--swipe" id="skjerm-sveip" aria-labelledby="sveip-tittel" hidden>
-      <h1 class="visually-hidden" id="sveip-tittel">Sveip utgiftene</h1>
-
-      <div class="framdrift">
-        <div class="framdrift__bar"><span class="framdrift__fill" id="framdrift-fill"></span></div>
-        <p class="framdrift__text">
-          <strong id="framdrift-tall">0 av 0</strong>
-          <span id="framdrift-sum"></span>
-        </p>
-      </div>
-
-      <p class="tvist" id="tvist-varsel" hidden></p>
-
-      <div class="scene">
-        <span class="scene__zone scene__zone--b" id="sone-b" aria-hidden="true"></span>
-        <span class="scene__zone scene__zone--a" id="sone-a" aria-hidden="true"></span>
-        <div class="stack" id="stack"></div>
-        <div class="tomt" id="tomt" hidden>
-          <p class="tomt__emoji" aria-hidden="true">🎉</p>
-          <p class="tomt__text">Alt sveipet!</p>
-          <button class="btn btn--primary btn--big" type="button" id="knapp-til-oppgjor">Se oppgjøret →</button>
-        </div>
-      </div>
-
-      <p class="visually-hidden" id="sveip-status" role="status" aria-live="polite"></p>
-
-      <div class="kontroller" id="kontroller"></div>
-      <div class="kontroller kontroller--ekstra" id="kontroller-ekstra"></div>
-
-      <div class="kontroller kontroller--sekundar">
-        <button class="btn btn--ghost" type="button" id="knapp-angre" disabled>↺ Angre</button>
-        <button class="btn btn--ghost" type="button" id="knapp-usikker" hidden>Usikker, ta senere</button>
-        <button class="btn btn--ghost" type="button" id="knapp-hopp-til-oppgjor">Se oppgjør</button>
-      </div>
-
-      <p class="hurtigtast">Piltastene sveiper også. <kbd>Z</kbd> angrer.</p>
-
-      <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-    </section>
-
-    <!-- ══ 3. OPPGJØR ══════════════════════════════════════════════ -->
-    <section class="screen screen--sum" id="skjerm-oppgjor" aria-labelledby="oppgjor-tittel" hidden>
-      <h1 class="sum__title" id="oppgjor-tittel">Oppgjør</h1>
-
-      <p class="dom" id="dom">&nbsp;</p>
-
-      <ul class="totaler" id="totaler"></ul>
-      <p class="sum__linje" id="sum-linje"></p>
-
-      <div class="sum__actions">
-        <button class="btn btn--primary" type="button" id="knapp-kopier">Kopier oppsummering</button>
-        <button class="btn btn--ghost" type="button" id="knapp-csv">Last ned CSV</button>
-        <button class="btn btn--ghost" type="button" id="knapp-tilbake">← Tilbake til sveip</button>
-      </div>
-
-      <p class="melding" id="melding-sum" role="status" aria-live="polite"></p>
-
-      <div class="panel panel--deling">
-        <h2 class="panel__title">Del hele oppgjøret</h2>
-        <p class="panel__hint">
-          Den andre kan godta fordelingen din eller fordele alt selv. Velger
-          de å fordele selv, viser Felleskortet kjøpene dere er uenige om.
-          Lenka inneholder kjøpstekster og beløp, så send den bare til den du
-          deler oppgjøret med.
-        </p>
-        <div class="deling-avsender" id="deling-avsender">
-          <p class="field__label" id="del-som-merkelapp">Hvilken pott er din?</p>
-          <p class="deling-avsender__hint">Navnet brukes som avsender når du deler oppgjøret.</p>
-          <div class="chips" id="del-som" role="group" aria-labelledby="del-som-merkelapp"></div>
-        </div>
-        <div class="panel__actions">
-          <button class="btn btn--primary" type="button" id="knapp-del">Del hele oppgjøret</button>
-        </div>
-        <p class="field">
-          <label class="field__label" for="kode-inn">Fikk du en lenke? Lim den inn her</label>
-          <input class="field__input" type="text" id="kode-inn" autocomplete="off" spellcheck="false"
-                 placeholder="https://felleskortet.no/#deling=…">
-        </p>
-        <div class="panel__actions">
-          <button class="btn btn--ghost" type="button" id="knapp-sammenlign">Sammenlign</button>
-        </div>
-        <input class="field__input" type="text" id="delings-lenke" readonly hidden aria-label="Delingslenke">
-        <p class="melding" id="delings-svar" role="status" aria-live="polite" hidden></p>
-      </div>
-
-      <h2 class="sum__subtitle">Alle utgifter</h2>
-      <p class="sum__hint">Angret deg? Trykk på en knapp for å flytte en utgift.</p>
-
-      <div class="filtre" id="filtre" role="group" aria-label="Filtrer utgifter"></div>
-      <ul class="rader" id="rader"></ul>
-    </section>
-
-    <!-- ══ 4. TIDSLINJE ════════════════════════════════════════════ -->
-    <section class="screen screen--tid" id="skjerm-tidslinje" aria-labelledby="tid-tittel" hidden>
-      <h1 class="sum__title" id="tid-tittel">Tidslinje</h1>
-      <p class="sum__hint" id="tid-oppsummering"></p>
-
-      <div class="filtre" id="tid-filtre" role="group" aria-label="Filtrer tidslinja"></div>
-
-      <ol class="tid" id="tid-liste"></ol>
-      <p class="melding" id="tid-melding"></p>
-    </section>
+  <main>
+    <h1>Felleskortet har flyttet</h1>
+    <p>Appen ligger nå på <a id="lenke" href="https://felleskortet.no/">felleskortet.no</a>.</p>
+    <p>Du sendes dit automatisk. Delingslenker virker som før.</p>
   </main>
-
-  <footer class="bunn">
-    <p>
-      Bygget av <a href="https://espenbjork.github.io/">Espen Bjørk</a> ·
-      <a href="https://github.com/espenbjork/espenbjork.github.io/tree/main/kortsveip">Kildekode ↗</a>
-    </p>
-    <button class="bunn__slett" type="button" id="knapp-analysevalg" hidden>Personvern og statistikk</button>
-    <button class="bunn__slett" type="button" id="knapp-slett-alt">Slett alle lokale data</button>
-  </footer>
-
-  <script src="kjerne.js?v=dev" defer></script>
-  <script src="les.js?v=dev" defer></script>
-  <script src="analyse.js?v=dev" defer></script>
-  <script src="app.js?v=dev" defer></script>
+  <script>
+    // Et delt oppgjør ligger i #-delen. Den skal med videre, ellers mister
+    // mottakeren hele fordelingen.
+    var mål = 'https://felleskortet.no/' + (location.hash || '');
+    document.getElementById('lenke').href = mål;
+    location.replace(mål);
+  </script>
 </body>
 </html>
