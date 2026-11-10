@@ -1,8 +1,9 @@
 /* ============================================================
-   clippy.js — binders-assistenten "Bindersen"
+   clippy.js, chatten til binders-assistenten «Bindersen»
    Åpner/lukker snakkeboblen og snakker med chat-backend-en
    (Cloudflare Worker, se github.com/espenbjork/clippy).
    API-nøkkelen ligger i Worker-en, aldri her.
+   Blikk, blunk og bryn bor i bindersen.js, som lytter på hendelsen «bindersen».
    ============================================================ */
 (() => {
   "use strict";
@@ -23,8 +24,12 @@
   const form = clippy.querySelector("#clippy-form");
   const input = clippy.querySelector("#clippy-input");
 
+  // Sier fra til bindersen.js om hva som skjer i chatten.
+  const tell = (what) => document.dispatchEvent(new CustomEvent("bindersen", { detail: what }));
+
   function setOpen(open) {
     clippy.dataset.open = open ? "true" : "false";
+    tell(open ? "open" : "close");
     if (char) char.setAttribute("aria-expanded", open ? "true" : "false");
     if (open && CLIPPY_API && input) setTimeout(() => input.focus(), 60);
   }
@@ -37,6 +42,19 @@
     closeBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       setOpen(false);
+    });
+  }
+
+  // Bindersen nederst på siden: tar deg opp til toppen og åpner chatten der.
+  const peek = document.querySelector('[data-bindersen="peek"]');
+  if (peek) {
+    peek.addEventListener("click", () => {
+      const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+      let done = false;
+      const open = () => { if (!done) { done = true; setOpen(true); } };
+      if ("onscrollend" in window) window.addEventListener("scrollend", open, { once: true });
+      setTimeout(open, smooth ? 900 : 0);
     });
   }
 
@@ -87,6 +105,7 @@
 
     const thinking = addMessage("bot", "…");
     thinking.classList.add("is-thinking");
+    tell("thinking");
 
     try {
       const res = await fetch(CLIPPY_API, {
@@ -100,9 +119,11 @@
       thinking.classList.remove("is-thinking");
       history.push({ role: "assistant", content: reply });
       persist();
+      tell("reply");
     } catch (e) {
       thinking.textContent = "Nettet svikter. Eller jeg gidder ikke. Prøv igjen.";
       thinking.classList.remove("is-thinking");
+      tell("error");
     } finally {
       busy = false;
       input.disabled = false;
@@ -110,6 +131,8 @@
       log.scrollTop = log.scrollHeight;
     }
   }
+
+  if (input) input.addEventListener("input", () => tell("typing"));
 
   if (form) {
     form.addEventListener("submit", (e) => {

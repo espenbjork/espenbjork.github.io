@@ -1,5 +1,12 @@
 /* ============================================================
-   DESIGNSYSTEM, varm redaksjonell, leken aksent
+   DESIGNSYSTEM
+   Et stille ark med blekk og en penn.
+
+   Tre regler som holder siden sammen:
+   1. Tekst står i ro. Det som beveger seg er streker: de tegnes.
+   2. Oransje er pennen til Espen. I ro finnes den to steder: streken
+      over «ubrukelige» og margnotatet. Ellers bare der du peker.
+   3. En skriftfamilie. Størrelse, vekt og kursiv gjør resten.
    ============================================================ */
 :root{
   /* Flater */
@@ -9,32 +16,33 @@
   /* Blekk / tekst */
   --ink:#16302a;
   --ink-2:#4c5f55;
-  --ink-3:#8a988e;
 
   /* Linjer */
-  --line:rgba(22,48,42,.14);
-  --line-2:rgba(22,48,42,.26);
+  --line:rgba(22,48,42,.16);
+  --line-2:rgba(22,48,42,.3);
 
-  /* Aksent, dus, brent oransje (tweakbar) */
+  /* Pennen */
   --accent:#bd6a39;
   --accent-ink:#f1efe5;
-  --accent-soft:color-mix(in srgb, var(--accent) 14%, var(--paper));
 
   /* British racing green, dypt panel */
   --brg:#0d3527;
-  --brg-2:#0e3a2b;
   --on-green:#e8ebe0;
+  --accent-on-green:color-mix(in srgb, var(--accent) 68%, var(--on-green));
 
-  /* Skrift */
-  --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --sans:'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --hand:'Caveat', cursive;
+  /* Skrift: en familie, variabel i vekt og optisk størrelse */
+  --serif:'Source Serif 4', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
 
   /* Mål */
-  --maxw:1120px;
+  --maxw:1180px;
   --gutter:clamp(1.25rem, 5vw, 4rem);
   --ease:cubic-bezier(.22,.61,.36,1);
-  --radius:14px;
+  --ease-ink:cubic-bezier(.3,.7,.15,1);      /* penn: rask ut, myk inn */
+  --ease-spring:cubic-bezier(.3,1.45,.45,1);  /* liten oversving */
+
+  /* Pennestrøk som maske: en tynn, lett buet tunge som strekkes til ordets bredde */
+  --pen-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M.6 6.4C.1 6.4.1 5.2.7 5.1 26 3.2 60 5 99.3 3.1c.6 0 .7 1.1.1 1.2C62 6.4 27 4.9.6 6.4Z'/%3E%3C/svg%3E");
+  --pen-strike:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M1.2 6.5C.2 6.6.1 4.5 1.1 4.3 25 2.7 60 4.5 98.8 2.4c1.1-.1 1.2 2.1.1 2.3C62 6.8 28 5 1.2 6.5Z'/%3E%3C/svg%3E");
 }
 
 /* ============================================================
@@ -42,476 +50,492 @@
    ============================================================ */
 *,*::before,*::after{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
-@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
 
 body{
   margin:0;
-  font-family:var(--sans);
+  font-family:var(--serif);
+  font-optical-sizing:auto;
   color:var(--ink);
   background:var(--paper);
-  line-height:1.6;
-  font-size:clamp(1rem, .95rem + .25vw, 1.125rem);
+  line-height:1.55;
+  font-size:clamp(1.0625rem, 1rem + .25vw, 1.1875rem);
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
-  /* mild papirtekstur */
-  background-image:radial-gradient(var(--line) .5px, transparent .5px);
-  background-size:22px 22px;
+  font-variant-numeric:lining-nums;
 }
 
-h1,h2,h3{ font-family:var(--serif); font-weight:400; line-height:1.05; margin:0; }
-p{ margin:0; }
+h1,h2,h3{ font-weight:400; line-height:1.05; margin:0; text-wrap:balance; }
+p{ margin:0; text-wrap:pretty; }
 a{ color:inherit; text-decoration:none; }
-em{ font-style:italic; }
 ul,ol{ margin:0; padding:0; list-style:none; }
+button,input{ font:inherit; color:inherit; }
 
 ::selection{ background:var(--accent); color:var(--accent-ink); }
-
-:focus-visible{ outline:2.5px solid var(--accent); outline-offset:3px; border-radius:4px; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:3px; }
 
 .skip-link{
   position:absolute; left:-9999px; top:0; z-index:100;
   background:var(--ink); color:var(--paper);
-  padding:.6rem 1rem; border-radius:0 0 var(--radius) 0;
+  padding:.6rem 1rem; border-radius:0 0 6px 0;
 }
 .skip-link:focus{ left:0; }
+
+/* ============================================================
+   PENNEN: understrek som tegnes der du peker
+   ============================================================ */
+.pen{ position:relative; }
+.pen::after,
+.card__title::after{
+  content:""; position:absolute; left:-.12em; right:-.12em; bottom:-.34em; height:.46em;
+  background:var(--accent);
+  -webkit-mask:var(--pen-line) center / 100% 100% no-repeat;
+          mask:var(--pen-line) center / 100% 100% no-repeat;
+  clip-path:inset(0 0 0 100%);                 /* i ro: borte. Forlater mot høyre */
+  transition:clip-path .32s var(--ease);
+  pointer-events:none;
+}
+.pen:hover::after,
+.pen:focus-visible::after,
+.card:hover .card__title::after{
+  clip-path:inset(0);
+  transition:none;
+  animation:pen-in .5s var(--ease-ink) backwards;
+}
+@keyframes pen-in{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0); } }
+/* Samme bevegelse under et annet navn, så streken i hero kan tegnes på nytt */
+@keyframes pen-again{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0); } }
 
 /* ============================================================
    LAYOUT-HJELPERE
    ============================================================ */
 .site-header,
 .section,
-.hero,
-.site-footer{
-  width:min(100% - 0px, var(--maxw));
+.hero{
+  width:min(100%, var(--maxw));
   margin-inline:auto;
   padding-inline:var(--gutter);
 }
-
-.section{ padding-block:clamp(3.5rem, 8vw, 6.5rem); }
+.section{ padding-block:clamp(4rem, 9vw, 7.5rem); }
 
 /* ============================================================
    HEADER / NAV
    ============================================================ */
-.site-header{
-  position:sticky; top:0; z-index:20;
-  padding-block:1rem;
-  backdrop-filter:saturate(1.2) blur(8px);
-  background:color-mix(in srgb, var(--paper) 82%, transparent);
-  border-bottom:1px solid var(--line);
+.site-header{ position:relative; padding-block:1.5rem 1.2rem; }
+.site-header::after{
+  content:""; position:absolute; left:var(--gutter); right:var(--gutter); bottom:0;
+  height:1px; background:var(--line-2); transform-origin:left;
 }
-.nav{ display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-.nav__brand{
-  display:inline-flex; align-items:center; gap:.55rem;
-  font-weight:600; letter-spacing:-.01em; font-size:1.05rem;
-}
-.nav__mark{
-  width:14px; height:14px; border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-soft);
-}
-.nav__links{ display:flex; gap:clamp(1rem,3vw,2rem); font-size:.95rem; }
+.js .site-header::after{ transform:scaleX(0); transition:transform 1.3s var(--ease-ink) .05s; }
+.js .is-ready .site-header::after{ transform:none; }
+
+.nav{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
+.nav__brand{ font-weight:600; font-size:1.08em; letter-spacing:-.005em; }
+.nav__links{ display:flex; gap:clamp(1.1rem,3vw,2.2rem); font-size:.98em; }
 .nav__links a{ color:var(--ink-2); transition:color .2s var(--ease); }
-.nav__links a:hover{ color:var(--accent); }
-@media (max-width:520px){ .nav__links{ gap:1rem; } .nav__brand{ font-size:1rem; } }
+.nav__links a:hover{ color:var(--ink); }
+@media (max-width:520px){
+  .nav{ flex-wrap:wrap; }
+  .nav__links{ gap:1rem; font-size:.94em; }
+}
 
 /* ============================================================
    HERO
    ============================================================ */
-.hero{ padding-block:clamp(1.25rem, 4vw, 3rem) clamp(2.5rem,6vw,4rem); position:relative; }
-.hero > *{ position:relative; z-index:1; }
+.hero{
+  position:relative;
+  display:flex; align-items:center;
+  min-height:min(74svh, 720px);
+  padding-block:clamp(3rem, 8vw, 6rem);
+}
+.hero__title{
+  font-size:clamp(2.75rem, 1.55rem + 6.1vw, 6.5rem);
+  font-weight:360; line-height:1; letter-spacing:-.032em;
+  max-width:7.2em; text-wrap:initial;
+}
+.hero__strike{ position:relative; white-space:nowrap; }
+.hero__strike::after{
+  content:""; position:absolute; left:-3%; right:-3%; top:41%; height:.33em;
+  background:var(--accent);
+  -webkit-mask:var(--pen-strike) center / 100% 100% no-repeat;
+          mask:var(--pen-strike) center / 100% 100% no-repeat;
+  pointer-events:none;
+}
+.js .hero__strike::after{ clip-path:inset(0 100% 0 0); }
+.js .is-ready .hero__strike::after{
+  clip-path:inset(0);
+  animation:pen-in .62s var(--ease-ink) .75s backwards;
+}
+.js .is-ready .hero__strike.is-again::after{ animation:pen-again .5s var(--ease-ink) backwards; }
 
-/* ── Clippy: binders-assistenten i hero ──────────────────── */
+/* ── Bindersen: binders-assistenten ─────────────────────────
+   Tegningen står i CSS, livet (blikk, blunk, bryn) i bindersen.js. */
 .clippy{
   position:absolute; z-index:2;
-  top:50%; right:clamp(0rem, 3vw, 2.5rem);
+  top:50%; right:clamp(.5rem, 5vw, 4.5rem);
   transform:translateY(-50%);
-  width:clamp(150px, 19vw, 215px);
+  width:clamp(170px, 21vw, 270px);
 }
 .clippy__char{
   display:block; width:100%; padding:0; margin:0;
   border:0; background:none; cursor:pointer;
   -webkit-tap-highlight-color:transparent;
+  transform-origin:50% 86%;
+  rotate:calc(var(--lean, 0) * 1deg);
 }
+.clippy__char:focus-visible{ outline:none; }
 .clippy__char:focus-visible .clippy__wire{ stroke:var(--accent); }
-.clippy__svg{ width:100%; height:auto; display:block; overflow:visible; }
+.clippy__svg{ width:100%; height:auto; display:block; overflow:visible; transform-origin:50% 86%; }
 
 .clippy__wire{
-  fill:none; stroke:var(--ink); stroke-width:8;
+  fill:none; stroke:var(--ink); stroke-width:6.5;
   stroke-linecap:round; stroke-linejoin:round;
-  stroke-dasharray:1400; stroke-dashoffset:1400;
 }
-.is-ready .clippy__wire{ animation:clippy-draw 1.8s var(--ease) forwards; }
+.js .clippy__wire{ stroke-dasharray:1400; stroke-dashoffset:1400; }
+.js .is-ready .clippy__wire{ animation:clippy-draw 1.7s var(--ease-ink) .15s forwards; }
 @keyframes clippy-draw{ to{ stroke-dashoffset:0; } }
 
-.clippy__face{ opacity:0; }
-.is-ready .clippy__face{ animation:clippy-face-in .5s var(--ease) 1.5s forwards; }
+.js .clippy__face{ opacity:0; }
+.js .is-ready .clippy__face{ animation:clippy-face-in .4s var(--ease) 1.45s forwards; }
 @keyframes clippy-face-in{ to{ opacity:1; } }
-.clippy__eye{ fill:#f6f4ec; stroke:var(--ink); stroke-width:3; }
-.clippy__pupil{ fill:var(--ink); }
-.clippy__brow{ fill:none; stroke:var(--ink); stroke-width:5; stroke-linecap:round; }
-.clippy__eyes{ transform-box:fill-box; transform-origin:center; }
-.clippy__brow{ transform-box:fill-box; transform-origin:center bottom; }
 
-/* idle-liv: vipp + blunk + blikk + bryn, ulike perioder = organisk */
-[data-motion="on"] .is-ready .clippy__svg{
-  transform-origin:50% 82%;
-  animation:clippy-bob 3.6s ease-in-out 1.9s infinite;
+.clippy__eye{ fill:#f6f4ec; stroke:var(--ink); stroke-width:2.6; }
+.clippy__pupil{
+  fill:var(--ink);
+  transform:translate(calc(var(--px, 0) * 1px), calc(var(--py, 0) * 1px));
 }
-[data-motion="on"] .is-ready .clippy__eyes{ animation:clippy-blink 5s ease-in-out 2s infinite; }
-[data-motion="on"] .is-ready .clippy__pupil{ animation:clippy-look 8s ease-in-out 3s infinite; }
-[data-motion="on"] .is-ready .clippy__brow{ animation:clippy-brow 8s ease-in-out 3s infinite; }
-@keyframes clippy-bob{
-  0%,100%{ transform:translateY(0) rotate(-2.5deg); }
-  50%{ transform:translateY(-7px) rotate(2.5deg); }
+.clippy__brow{
+  fill:none; stroke:var(--ink); stroke-width:4.2; stroke-linecap:round;
+  transform-box:fill-box; transform-origin:center;
 }
-@keyframes clippy-blink{ 0%,92%,100%{ transform:scaleY(1); } 96%{ transform:scaleY(.08); } }
-@keyframes clippy-look{ 0%,28%,72%,100%{ transform:translateX(0); } 40%,56%{ transform:translateX(5px); } }
-@keyframes clippy-brow{ 0%,34%,62%,100%{ transform:translateY(0); } 44%,54%{ transform:translateY(-4px); } }
+.clippy__brow--l{ transform:translateY(calc(var(--bl, 0) * 1px)) rotate(calc(var(--bla, 0) * 1deg)); }
+.clippy__brow--r{ transform:translateY(calc(var(--br, 0) * 1px)) rotate(calc(var(--bra, 0) * 1deg)); }
+.clippy__eyes{ transform-box:fill-box; transform-origin:center; }
+
+/* Hvile: en rolig vugging. Alt annet er hendelser, ikke tilstander. */
+[data-motion="on"] .is-ready .clippy__svg{ animation:clippy-sway 6.4s ease-in-out 2s infinite; }
+@keyframes clippy-sway{
+  0%,100%{ transform:translateY(0) rotate(-1.1deg); }
+  50%{ transform:translateY(-3px) rotate(1.1deg); }
+}
 
 /* ── Snakkeboble ─────────────────────────────────────────── */
 .clippy__bubble{
   position:absolute; z-index:3;
-  right:calc(100% - 34px); top:0;
-  width:min(74vw, 265px);
+  right:calc(66% + 14px); top:54%;
+  width:min(76vw, 280px);
   background:var(--paper-2);
-  border:1.5px solid var(--ink);
-  border-radius:16px;
-  padding:.95rem 1.05rem .85rem;
-  box-shadow:0 16px 36px -18px rgba(22,48,42,.55);
-  transition:opacity .3s var(--ease), transform .3s var(--ease);
+  border:1px solid var(--ink);
+  border-radius:12px;
+  padding:.95rem 1.05rem .9rem;
+  box-shadow:0 18px 40px -22px rgba(22,48,42,.5);
+  transform-origin:100% 34px;
+  transition:opacity .22s var(--ease), transform .34s var(--ease-spring);
 }
-/* Åpning/lukking styres av .3s-overgangen over (ingen forsinket pop, som ellers
-   gjorde at boblen lå usynlig en stund hver gang man åpnet den på nytt). */
-.clippy[data-open="false"] .clippy__bubble{ opacity:0; transform:scale(.85) translateY(6px); pointer-events:none; }
+.clippy[data-open="false"] .clippy__bubble{
+  opacity:0; transform:scale(.9) translateX(8px); pointer-events:none;
+  transition:opacity .16s var(--ease), transform .2s var(--ease);
+}
 .clippy__bubble::after{
-  content:""; position:absolute; right:-7px; top:22px;
-  width:14px; height:14px; background:var(--paper-2);
-  border-right:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink);
+  content:""; position:absolute; right:-6.5px; top:28px;
+  width:12px; height:12px; background:var(--paper-2);
+  border-right:1px solid var(--ink); border-bottom:1px solid var(--ink);
   transform:rotate(-45deg);
 }
 .clippy__close{
-  position:absolute; top:5px; right:8px; border:0; background:none;
-  cursor:pointer; font-size:1.25rem; line-height:1; color:var(--ink-3);
+  position:absolute; top:4px; right:7px; border:0; background:none;
+  cursor:pointer; font-size:1.3rem; line-height:1; color:var(--ink-2);
+  padding:.15rem .35rem;
 }
-.clippy__close:hover{ color:var(--accent); }
-.clippy__hi{ font-size:.9rem; color:var(--ink-2); }
-.clippy__hi strong{ color:var(--ink); }
-.clippy__text{ font-family:var(--serif); font-size:1.18rem; line-height:1.15; margin-top:.15rem; }
-.clippy__chips{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.75rem; }
-.clippy__chip{
-  font-size:.8rem; font-weight:600; color:var(--ink);
-  background:var(--paper); border:1px solid var(--line-2);
-  border-radius:999px; padding:.25rem .65rem;
-  transition:border-color .2s var(--ease), color .2s var(--ease);
-}
-.clippy__chip:hover{ border-color:var(--accent); color:var(--accent); }
-.clippy__soon{ font-family:var(--hand); color:var(--accent); font-size:1.05rem; margin-top:.55rem; }
+.clippy__close:hover{ color:var(--ink); }
+.clippy__hi{ font-size:.92rem; color:var(--ink-2); padding-right:1.2rem; }
+.clippy__hi strong{ color:var(--ink); font-weight:600; }
 
 /* ── Chat: Bindersen svarer ──────────────────────────────── */
 .clippy__log{
   display:flex; flex-direction:column; gap:.45rem;
-  max-height:200px; overflow-y:auto;
-  margin-top:.6rem; padding-right:.15rem;
+  max-height:210px; overflow-y:auto;
+  margin-top:.65rem; padding-right:.15rem;
+  scrollbar-width:thin;
 }
 .clippy__msg{
-  position:relative;
-  font-size:.95rem; line-height:1.3; max-width:90%;
-  padding:.4rem .6rem; border-radius:13px; white-space:pre-wrap;
+  font-size:.95rem; line-height:1.35; max-width:90%;
+  padding:.42rem .68rem; border-radius:11px; white-space:pre-wrap;
 }
 .clippy__msg--bot{
-  align-self:flex-end; color:var(--on-green);
-  background:var(--brg);
-  border-bottom-right-radius:4px;
-}
-.clippy__msg--bot::before{
-  content:""; position:absolute; right:-3px; bottom:8px;
-  width:9px; height:9px; background:var(--brg);
-  border-radius:1px; transform:rotate(45deg);
+  align-self:flex-end; color:var(--on-green); background:var(--brg);
+  border-bottom-right-radius:3px;
 }
 .clippy__msg--me{
-  align-self:flex-start; color:var(--accent-ink); background:var(--accent);
-  border-bottom-left-radius:4px;
+  align-self:flex-start; color:var(--ink);
+  background:var(--paper); box-shadow:inset 0 0 0 1px var(--line-2);
+  border-bottom-left-radius:3px;
 }
-.clippy__msg--me::before{
-  content:""; position:absolute; left:-3px; bottom:8px;
-  width:9px; height:9px; background:var(--accent);
-  border-radius:1px; transform:rotate(45deg);
-}
-.clippy__msg.is-thinking{ opacity:.55; letter-spacing:.18em; }
+.clippy__msg.is-thinking{ opacity:.6; letter-spacing:.2em; }
 
-.clippy__form{ display:flex; gap:.4rem; margin-top:.65rem; }
+.clippy__form{ display:flex; gap:.4rem; margin-top:.7rem; }
 .clippy__input{
-  flex:1; min-width:0; font:inherit; font-size:.92rem;
-  padding:.45rem .65rem; color:var(--ink);
-  background:var(--paper); border:1px solid var(--line-2); border-radius:999px;
+  flex:1; min-width:0; font-size:.95rem;
+  padding:.45rem .7rem; color:var(--ink);
+  background:var(--paper); border:1px solid var(--line-2); border-radius:8px;
 }
-.clippy__input:focus-visible{ outline:none; border-color:var(--accent); }
+.clippy__input::placeholder{ color:var(--ink-2); opacity:.8; font-style:italic; }
+.clippy__input:focus-visible{ outline:none; border-color:var(--ink); }
 .clippy__send{
-  flex:none; width:36px; border:0; cursor:pointer; border-radius:999px;
-  background:var(--ink); color:#fff; font-size:1rem; line-height:1;
+  flex:none; width:38px; border:0; cursor:pointer; border-radius:8px;
+  background:var(--ink); color:var(--paper); font-size:1rem; line-height:1;
   transition:background-color .2s var(--ease);
 }
-.clippy__send:hover{ background:var(--accent); }
+.clippy__send:hover{ background:var(--brg); }
 .clippy__input:disabled,.clippy__send:disabled{ opacity:.5; cursor:default; }
 
 @media (max-width:880px){
+  .hero{ display:block; min-height:0; }
   .clippy{
-    position:static; transform:none; width:100%; margin:2.5rem 0 0;
-    display:flex; flex-direction:column-reverse; align-items:center;
+    position:static; transform:none; width:100%; margin:2.75rem 0 0;
+    display:flex; flex-direction:column-reverse; align-items:flex-start;
   }
-  .clippy__char{ width:118px; }
+  .clippy__char{ width:112px; }
   .clippy__bubble{
-    position:static; transform:none; margin-top:1.3rem; max-width:300px;
-    left:auto; right:auto; top:auto; bottom:auto;
+    position:static; margin-top:1.2rem; width:min(100%, 320px);
+    transform-origin:20% 0;
   }
   .clippy[data-open="false"] .clippy__bubble{ display:none; }
   .clippy__bubble::after{ display:none; }
-  .is-ready .clippy[data-open="true"] .clippy__bubble{ animation:none; }
 }
-@media (prefers-reduced-motion:reduce){
-  .clippy__wire{ stroke-dashoffset:0; }
-  .clippy__face{ opacity:1; }
-  .clippy__svg,.clippy__eyes,.clippy__pupil,.clippy__brow,.clippy__bubble{ animation:none !important; }
-}
-.hero__title{
-  font-size:clamp(2.6rem, 1.8rem + 5.2vw, 5.6rem);
-  max-width:14ch; letter-spacing:-.01em;
-}
-.hero__title em{ color:var(--accent); }
-.hero__strike{ position:relative; white-space:nowrap; }
-.hero__strike::after{
-  content:""; position:absolute; left:-2%; right:-2%; top:54%;
-  height:.09em; background:var(--accent);
-  transform:scaleX(0); transform-origin:left;
-  transition:transform .8s var(--ease) .4s;
-}
-.is-ready .hero__strike::after{ transform:scaleX(1); }
 
-/* Håndskrevne margnotater */
+/* ============================================================
+   SEKSJONSHODER
+   ============================================================ */
+.section__head{ margin-bottom:clamp(2rem,4vw,3.25rem); }
+.section__title{
+  font-size:clamp(2.2rem, 1.5rem + 3vw, 3.75rem);
+  font-weight:360; letter-spacing:-.026em;
+}
+.section__intro{ margin-top:.75rem; max-width:44ch; color:var(--ink-2); font-size:1.1em; }
+
+/* Margnotatet: pennen, i kursiv */
 .margin-note{
-  font-family:var(--hand); color:var(--accent);
-  font-size:1.5rem; line-height:1.1; transform:rotate(-2.5deg);
+  margin-top:.9rem; font-style:italic; font-size:1.02em; color:var(--accent);
 }
 [data-notes="off"] .margin-note{ display:none; }
 
 /* ============================================================
-   SECTION-HODER
+   PROSJEKTER: 2 rader som blas sidelengs
    ============================================================ */
-.section__head{ margin-bottom:clamp(2rem,4vw,3.2rem); max-width:60ch; }
-.section__title{
-  font-size:clamp(2rem,1.5rem + 2.5vw,3.4rem);
-  margin-bottom:.6rem;
-}
-.section__title::before{
-  content:""; display:inline-block; vertical-align:middle;
-  width:.55em; height:.55em; margin-right:.5rem; border-radius:50%;
-  background:var(--accent);
-}
-.section__intro{ color:var(--ink-2); font-size:1.1rem; }
-.section__intro strong{ color:var(--ink); font-weight:600; }
-
-/* ============================================================
-   ARBEID, prosjekt-karusell, 2 rader som scroller sidelengs
-   ============================================================ */
-/* Hode med plass til bla-knapper ute til høyre */
 .section__head--carousel{
-  max-width:none;
   display:flex; align-items:flex-end; justify-content:space-between;
   gap:1rem 2rem; flex-wrap:wrap;
 }
-.section__head--carousel .section__head-main{ max-width:60ch; }
 
-/* Bla-knapper, kun desktop (vises av main.js når det finnes mer å se) */
-.carousel__nav{ display:flex; gap:.6rem; flex-shrink:0; }
+/* Bla-piler, kun desktop (vises av main.js når det finnes mer å se) */
+.carousel__nav{ display:flex; gap:.2rem; flex-shrink:0; margin-right:-.6rem; }
 .carousel__nav[hidden]{ display:none; }
 .carousel__btn{
-  inline-size:2.9rem; block-size:2.9rem;
-  display:grid; place-items:center;
-  font-size:1.15rem; line-height:1; color:var(--ink);
-  background:var(--paper-2); border:1px solid var(--line-2);
-  border-radius:50%; cursor:pointer;
-  transition:background-color .2s var(--ease), border-color .2s var(--ease),
-             color .2s var(--ease), transform .15s var(--ease), opacity .2s var(--ease);
+  border:0; background:none; cursor:pointer;
+  font-size:1.7rem; line-height:1; padding:.35rem .6rem;
+  transition:translate .25s var(--ease-spring), opacity .2s var(--ease);
 }
-.carousel__btn:hover{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
-.carousel__btn:active{ transform:scale(.9); }
-.carousel__btn:disabled{ opacity:.3; cursor:default; }
-.carousel__btn:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+.carousel__btn[data-dir="prev"]:not(:disabled):hover{ translate:-4px 0; }
+.carousel__btn[data-dir="next"]:not(:disabled):hover{ translate:4px 0; }
+.carousel__btn:not(:disabled):active{ translate:0 0; }
+.carousel__btn:disabled{ opacity:.22; cursor:default; }
 
 /* Skall, holder kant-toningene som hinter «det er mer» */
 .carousel{ position:relative; }
 .carousel::before,
 .carousel::after{
   content:""; position:absolute; top:0; bottom:0;
-  inline-size:clamp(1.4rem, 5vw, 3.2rem);
+  inline-size:var(--gutter);
   pointer-events:none; z-index:2; opacity:0;
   transition:opacity .3s var(--ease);
 }
-.carousel::before{ left:0;  background:linear-gradient(to right, var(--paper), transparent); }
-.carousel::after { right:0; background:linear-gradient(to left,  var(--paper), transparent); }
+.carousel::before{ left:calc(-1 * var(--gutter));  background:linear-gradient(to right, var(--paper) 15%, transparent); }
+.carousel::after { right:calc(-1 * var(--gutter)); background:linear-gradient(to left,  var(--paper) 15%, transparent); }
 .carousel.can-left::before{ opacity:1; }
 .carousel.can-right::after{ opacity:1; }
 
-/* Selve sporet, 2 rader og uendelig mange kolonner, x-scroll med snap */
+/* Sporet: 2 rader, så mange kolonner som trengs, x-scroll med snap.
+   Det går helt ut i margen, så kortene glir ut av arket og ikke inn i en vegg. */
 .cards{
   display:grid;
   grid-auto-flow:column;
   grid-template-rows:repeat(2, auto);
-  grid-auto-columns:clamp(270px, 80vw, 344px);
-  gap:1.5rem;
-  margin:0; padding:.9rem 0 2rem;          /* luft til hover-løft + scrollbar */
+  grid-auto-columns:clamp(270px, 78vw, 348px);
+  gap:2.75rem 2rem;
+  margin:0 calc(-1 * var(--gutter)); padding:.25rem var(--gutter) 1.75rem;
   overflow-x:auto; overflow-y:hidden;
-  scroll-snap-type:x proximity;
+  scroll-snap-type:x proximity; scroll-padding-inline:var(--gutter);
   overscroll-behavior-x:contain;
-  -webkit-overflow-scrolling:touch;
   scrollbar-width:thin;
-  scrollbar-color:color-mix(in srgb, var(--accent) 60%, transparent) transparent;
+  scrollbar-color:var(--line-2) transparent;
 }
-.cards:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:var(--radius); }
-.cards::-webkit-scrollbar{ height:8px; }
+.cards:focus-visible{ outline-offset:6px; }
+.cards::-webkit-scrollbar{ height:6px; }
 .cards::-webkit-scrollbar-track{ background:transparent; }
-.cards::-webkit-scrollbar-thumb{
-  background:color-mix(in srgb, var(--accent) 50%, transparent); border-radius:999px;
-}
-.cards::-webkit-scrollbar-thumb:hover{ background:var(--accent); }
+.cards::-webkit-scrollbar-thumb{ background:var(--line-2); border-radius:999px; }
+.cards::-webkit-scrollbar-thumb:hover{ background:var(--ink-2); }
 
-/* Skjul piler der sidelengs sveiping er naturlig (touch / smale skjermer) */
+/* Dra med mus: sporet følger hånda (main.js) */
+.cards.is-grabbable{ cursor:grab; }
+.cards.is-dragging{ cursor:grabbing; scroll-snap-type:none; user-select:none; -webkit-user-select:none; }
+.cards.is-dragging a{ pointer-events:none; }
+.cards.is-gliding{ scroll-snap-type:none; }
+
 @media (max-width:680px), (pointer:coarse){
   .carousel__nav{ display:none; }
 }
 
-.card{ scroll-snap-align:start; }
-.card{
-  display:flex; flex-direction:column; height:100%;
-  background:var(--paper-2);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  overflow:hidden;
-  transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
-}
-.card:hover{
-  transform:translateY(-4px);
-  border-color:var(--accent);
-  box-shadow:0 16px 44px -20px rgba(22,48,42,.55);
-}
+.card{ display:flex; flex-direction:column; scroll-snap-align:start; }
 .card__media{
   display:block; aspect-ratio:16 / 10; overflow:hidden;
-  background:var(--paper); border-bottom:1px solid var(--line);
+  background:var(--paper-2); border-radius:5px;
+  box-shadow:0 0 0 1px var(--line-2);
+  transition:box-shadow .3s var(--ease);
 }
+.card:hover .card__media{ box-shadow:0 0 0 1px var(--ink); }
 .card__media img{
   width:100%; height:100%; display:block;
   object-fit:cover; object-position:top center;
-  transition:transform .45s var(--ease);
+  -webkit-user-drag:none; user-select:none;
 }
-.card:hover .card__media img{ transform:scale(1.035); }
-.card__body{ display:flex; flex-direction:column; flex:1; padding:1.3rem 1.5rem 1.5rem; }
-.card__title{ font-size:1.65rem; }
-.card__desc{ margin-top:.55rem; color:var(--ink-2); font-size:1rem; flex:1; }
+.card__body{ display:flex; flex-direction:column; flex:1; padding-top:1.05rem; }
+.card__title{
+  position:relative; align-self:flex-start;
+  font-size:1.6rem; letter-spacing:-.016em;
+}
+.card__desc{ margin-top:.5rem; color:var(--ink-2); font-size:.97em; line-height:1.5; flex:1; }
 .card__actions{
-  margin-top:1.3rem; padding-top:1.1rem; border-top:1px solid var(--line);
-  display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  margin-top:.95rem;
+  display:flex; align-items:baseline; justify-content:space-between; gap:.35rem 1rem; flex-wrap:wrap;
+  font-size:.9em;
 }
-.tag{
-  font-size:.72rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--ink-2); background:var(--paper);
-  border:1px solid var(--line); border-radius:999px; padding:.25rem .7rem;
-}
+.tag{ font-style:italic; color:var(--ink-2); }
 .card__links{ display:inline-flex; gap:1.1rem; }
 .card__links a{
-  font-weight:600; font-size:.92rem; color:var(--ink);
-  border-bottom:1.5px solid var(--accent); padding-bottom:1px;
-  transition:color .2s var(--ease);
+  text-decoration:underline; text-decoration-thickness:1px;
+  text-decoration-color:var(--line-2); text-underline-offset:.24em;
 }
-.card__links a:hover{ color:var(--accent); }
-.card__credit{ margin-top:.7rem; font-size:.74rem; line-height:1.45; color:var(--ink-2); opacity:.85; }
-.card__credit a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
-.card__note{ font-size:.85rem; color:var(--ink-2); }
+.card__credit{ margin-top:.7rem; font-size:.74em; line-height:1.45; color:var(--ink-2); }
+.card__credit a{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px; }
+.card__note{ color:var(--ink-2); }
 
 /* ============================================================
-   ERFARING, tidslinje på dypt grønt panel
+   ERFARING: tidslinje på dypt grønt panel
    ============================================================ */
 .section--cv{
-  width:100%;
-  max-width:none; padding-inline:var(--gutter);
-  background:var(--brg);
-  color:var(--on-green);
+  width:100%; max-width:none;
+  background:var(--brg); color:var(--on-green);
 }
-.section--cv > *{
-  width:min(100%, var(--maxw)); margin-inline:auto;
-}
-.section--cv .section__title{ color:var(--on-green); }
-.section--cv .section__intro{ color:color-mix(in srgb, var(--on-green) 75%, transparent); }
-.section--cv .margin-note{ color:var(--accent); }
+.section--cv > *{ width:min(100%, calc(var(--maxw) - 2 * var(--gutter))); margin-inline:auto; }
+.section--cv .section__intro{ color:color-mix(in srgb, var(--on-green) 76%, transparent); }
+.section--cv .margin-note{ color:var(--accent-on-green); }
+.section--cv ::selection{ background:var(--on-green); color:var(--brg); }
 
-.timeline{ position:relative; display:grid; gap:.4rem; }
+.timeline{ display:grid; }
 .timeline__item{
+  position:relative;
   display:grid;
-  grid-template-columns:minmax(8.5rem, 11rem) 1fr;
+  grid-template-columns:minmax(8.5rem, 12rem) 1fr;
   gap:clamp(1rem,3vw,2.5rem);
-  padding:1.5rem 0;
-  border-top:1px solid color-mix(in srgb, var(--on-green) 16%, transparent);
+  padding:1.6rem 0 1.75rem;
 }
-.timeline__item:last-child{ border-bottom:1px solid color-mix(in srgb, var(--on-green) 16%, transparent); }
+/* Skillelinjene tegnes fra venstre når raden kommer til syne */
+.timeline__item::before,
+.timeline__item:last-child::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:1px;
+  background:color-mix(in srgb, var(--on-green) 24%, transparent);
+  transform-origin:left;
+}
+.timeline__item:last-child::after{ top:auto; bottom:0; }
+.js .timeline__item::before,
+.js .timeline__item:last-child::after{
+  transform:scaleX(0);
+  transition:transform 1.25s var(--ease-ink) var(--d, 0ms);
+}
+.js .timeline__item:last-child::after{ transition-delay:calc(var(--d, 0ms) + 220ms); }
+.js .timeline__item.is-inked::before,
+.js .timeline__item.is-inked:last-child::after{ transform:none; }
+
 .timeline__when{
-  font-variant-numeric:tabular-nums; font-size:.9rem; font-weight:500;
-  color:color-mix(in srgb, var(--on-green) 65%, transparent);
-  padding-top:.45rem;
+  font-variant-numeric:tabular-nums lining-nums; font-size:.9em;
+  color:color-mix(in srgb, var(--on-green) 64%, transparent);
+  padding-top:.5rem;
 }
-.timeline__role{ font-size:1.5rem; line-height:1.12; color:var(--on-green); }
-.timeline__org{
-  font-weight:600; font-size:.92rem; margin-top:.25rem; color:var(--accent);
-  text-transform:uppercase; letter-spacing:.06em;
-}
-.timeline__text{ margin-top:.7rem; color:color-mix(in srgb, var(--on-green) 82%, transparent); max-width:62ch; }
-.timeline__item--edu .timeline__role{ font-style:italic; }
+.timeline__role{ font-size:1.55rem; line-height:1.14; letter-spacing:-.012em; text-wrap:initial; }
+.timeline__org{ margin-top:.25rem; font-style:italic; color:color-mix(in srgb, var(--on-green) 80%, transparent); }
+.timeline__text{ margin-top:.7rem; max-width:60ch; color:color-mix(in srgb, var(--on-green) 86%, transparent); }
 @media (max-width:620px){
-  .timeline__item{ grid-template-columns:1fr; gap:.4rem; }
-  .timeline__when{ padding-top:0; order:-1; }
+  .timeline__item{ grid-template-columns:1fr; gap:.35rem; }
+  .timeline__when{ padding-top:0; }
 }
 
 /* ============================================================
    KONTAKT
    ============================================================ */
-.section--contact{ text-align:center; }
-.section--contact .section__title::before{ display:none; }
-.contact__lead{ max-width:46ch; margin:1rem auto 2.4rem; color:var(--ink-2); font-size:1.2rem; }
-.contact__links{
-  display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;
+.section--contact{ padding-bottom:0; }
+.contact__lead{ max-width:38ch; margin-top:.9rem; color:var(--ink-2); font-size:1.15em; }
+.contact__mail{
+  margin-top:clamp(2rem, 5vw, 3.25rem);
+  font-size:clamp(1.85rem, .9rem + 4.6vw, 4.5rem);
+  font-weight:360; line-height:1.1; letter-spacing:-.032em;
 }
-.contact__links a{
-  display:grid; gap:.2rem; text-align:left;
-  background:var(--paper-2); border:1px solid var(--line);
-  border-radius:var(--radius); padding:1.1rem 1.6rem; min-width:230px;
-  transition:border-color .2s var(--ease), transform .2s var(--ease);
+.contact__mail a{ display:inline-block; }
+.contact__mail .pen::after{ bottom:-.2em; height:.3em; }
+.contact__more{ margin-top:1.1rem; font-size:1.1em; color:var(--ink-2); }
+.contact__more a{ transition:color .2s var(--ease); }
+.contact__more a:hover{ color:var(--ink); }
+
+/* Slutten: en strek, og en som kikker over den */
+.contact__end{
+  position:relative;
+  margin-top:clamp(4.5rem, 11vw, 8rem);
+  padding-bottom:clamp(3.25rem, 7vw, 4.75rem);
 }
-.contact__links a:hover{ border-color:var(--accent); transform:translateY(-3px); }
-.contact__type{ font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-3); font-weight:600; }
-.contact__value{ font-size:1.15rem; font-weight:500; }
+.contact__end::before{
+  content:""; display:block; height:1px; background:var(--line-2); transform-origin:left;
+}
+.js .contact__end::before{ transform:scaleX(0); transition:transform 1.4s var(--ease-ink); }
+.js .contact__end.is-inked::before{ transform:none; }
+
+.peek{
+  --peek:clamp(108px, 14vw, 150px);
+  position:absolute; right:clamp(.5rem, 6vw, 5rem); bottom:100%;
+  width:var(--peek); height:var(--peek); overflow:hidden;
+  margin-bottom:-1px;                     /* står på streken */
+  pointer-events:none;
+}
+.peek .clippy__char{
+  pointer-events:auto;
+  transform-origin:50% 100%;
+  translate:0 27%;                        /* øynene akkurat over streken (prosent av egen høyde) */
+  transition:translate .9s var(--ease-spring);
+}
+.js .peek .clippy__char{ translate:0 72%; }
+.js .contact__end.is-inked .peek .clippy__char{ translate:0 27%; transition-delay:.9s; }
+.js .contact__end.is-inked .peek .clippy__char:hover{ translate:0 20%; transition-delay:0s; transition-duration:.45s; }
+.peek .clippy__wire{ stroke-dasharray:none; stroke-dashoffset:0; animation:none !important; }
+.peek .clippy__face{ opacity:1; animation:none !important; }
+.peek .clippy__svg{ animation:none !important; }
 
 /* ============================================================
-   FOOTER
+   BEVEGELSE AV
    ============================================================ */
-.site-footer{
-  padding-block:2.5rem 3rem; border-top:1px solid var(--line);
-  display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; align-items:center; justify-content:space-between;
-  color:var(--ink-3); font-size:.9rem;
-}
-.site-footer__hint{ font-variant-numeric:tabular-nums; letter-spacing:.15em; opacity:.55; }
-
-/* ============================================================
-   INNGANGS-ANIMASJON (respekterer reduced-motion + data-motion)
-   ============================================================ */
-[data-motion="on"] .reveal{
-  opacity:0; transform:translateY(18px);
-  transition:opacity .7s var(--ease), transform .7s var(--ease);
-}
-[data-motion="on"] .reveal.is-visible{ opacity:1; transform:none; }
 @media (prefers-reduced-motion:reduce){
-  [data-motion="on"] .reveal{ opacity:1; transform:none; transition:none; }
-  .hero__strike::after,.nytteverdi__fill{ transition:none; }
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{
+    animation-duration:.01ms !important; animation-delay:0s !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important; transition-delay:0s !important;
+  }
+}
+[data-motion="off"] *,
+[data-motion="off"] *::before,
+[data-motion="off"] *::after{
+  animation-duration:.01ms !important; animation-delay:0s !important;
+  transition-duration:.01ms !important; transition-delay:0s !important;
 }
 
 /* "Ekstra ubrukelig"-modus (Konami) */
 body.konami{ animation:tilt 6s var(--ease) infinite alternate; }
 @keyframes tilt{ from{ filter:hue-rotate(0); } to{ filter:hue-rotate(-12deg); } }
-body.konami .card:hover{ transform:translateY(-4px) rotate(-1deg); }
+body.konami .card:hover{ rotate:-1deg; }

@@ -31,23 +31,21 @@
   <!-- Skrifter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/styles.css?v=dev">
+  <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
   <a class="skip-link" href="#hovedinnhold">Hopp til innhold</a>
 
   <header class="site-header" id="toppen">
     <nav class="nav" aria-label="Hovednavigasjon">
-      <a class="nav__brand" href="#toppen">
-        <span class="nav__mark" aria-hidden="true"></span>
-        Espen&nbsp;Bjørk
-      </a>
+      <a class="nav__brand" href="#toppen">Espen&nbsp;Bjørk</a>
       <ul class="nav__links">
-        <li><a href="#arbeid">Prosjekter</a></li>
-        <li><a href="#erfaring">Erfaring</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
+        <li><a class="pen" href="#arbeid">Prosjekter</a></li>
+        <li><a class="pen" href="#erfaring">Erfaring</a></li>
+        <li><a class="pen" href="#kontakt">Kontakt</a></li>
       </ul>
     </nav>
   </header>
@@ -76,7 +74,7 @@
           </form>
         </div>
 
-        <button class="clippy__char" type="button" aria-label="Snakk med Espens assistent" aria-controls="clippy-bubble" aria-expanded="false">
+        <button class="clippy__char" type="button" data-bindersen="hero" aria-label="Snakk med Espens assistent" aria-controls="clippy-bubble" aria-expanded="false">
           <svg class="clippy__svg" viewBox="0 0 220 320" fill="none" aria-hidden="true" focusable="false">
             <path class="clippy__wire" d="M138 86 C138 55 78 55 78 86 L78 250 C78 285 150 285 150 250 L150 120 C150 92 100 92 100 120 L100 232" />
             <g class="clippy__face">
@@ -86,8 +84,8 @@
                 <circle class="clippy__pupil" cx="99" cy="114" r="6.5" />
                 <circle class="clippy__pupil" cx="143" cy="114" r="6.5" />
               </g>
-              <path class="clippy__brow" d="M80 82 Q96 73 113 80" />
-              <path class="clippy__brow" d="M125 80 Q142 73 158 82" />
+              <path class="clippy__brow clippy__brow--l" d="M80 82 Q96 73 113 80" />
+              <path class="clippy__brow clippy__brow--r" d="M125 80 Q142 73 158 82" />
             </g>
           </svg>
         </button>
@@ -134,7 +132,7 @@
 
           <li class="card">
             <div class="card__media">
-              <img src="assets/screenshots/feriekart.jpg" alt="Skjermbilde av Feriekart: Europa farget etter typisk dagtemperatur i juli, med årskurven for Lisboa" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/feriekart.jpg" alt="Skjermbilde av Feriekart: Europa farget etter typisk dagtemperatur i juli, med årskurven for Lisboa" loading="lazy" decoding="async" width="1000" height="625">
             </div>
             <div class="card__body">
               <h3 class="card__title">Feriekart</h3>
@@ -150,7 +148,7 @@
                 Verken EU-kommisjonen eller ECMWF er ansvarlig for bruken.
               </p>
               <div class="card__actions">
-                <span class="tag">Python · Canvas · ERA5-Land</span>
+                <span class="tag">Python, Canvas, ERA5-Land</span>
                 <span class="card__note">Privat verktøy</span>
               </div>
             </div>
@@ -158,7 +156,7 @@
 
           <li class="card">
             <a class="card__media" href="https://catanmesterskap.no/" target="_blank" rel="noopener" aria-label="Catanmesterskapet, åpne nettsiden">
-              <img src="assets/screenshots/catanmesterskap.jpg" alt="Skjermbilde av Catanmesterskapet" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/catanmesterskap.jpg" alt="Skjermbilde av Catanmesterskapet" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Catanmesterskapet</h3>
@@ -168,9 +166,9 @@
                 poengene, og storskjermen viser tabellen mens klokka går.
               </p>
               <div class="card__actions">
-                <span class="tag">JS · Cloudflare Workers · D1</span>
+                <span class="tag">JS, Cloudflare Workers, D1</span>
                 <span class="card__links">
-                  <a href="https://catanmesterskap.no/" target="_blank" rel="noopener">Nettside ↗</a>
+                  <a class="pen" href="https://catanmesterskap.no/" target="_blank" rel="noopener">Nettside</a>
                 </span>
               </div>
             </div>
@@ -178,7 +176,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/bokhylla/" target="_blank" rel="noopener" aria-label="Bokhylla, åpne demo">
-              <img src="assets/screenshots/bokhylla.jpg" alt="Skjermbilde av Bokhylla" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/bokhylla.jpg" alt="Skjermbilde av Bokhylla" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Bokhylla</h3>
@@ -188,10 +186,10 @@
                 nattbordet og salongbordet.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · JS · SQLite · lokal først</span>
+                <span class="tag">HTML, JS, SQLite, lokal først</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/bokhylla" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/bokhylla/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/bokhylla" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/bokhylla/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -199,7 +197,7 @@
 
           <li class="card">
             <a class="card__media" href="https://felleskortet.no/" target="_blank" rel="noopener" aria-label="Felleskortet, åpne appen">
-              <img src="assets/screenshots/kortsveip.jpg" alt="Skjermbilde av Felleskortet" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/kortsveip.jpg" alt="Skjermbilde av Felleskortet" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Felleskortet</h3>
@@ -210,10 +208,10 @@
                 kjøpene dere er uenige om løftes opp.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · JS · uten byggesteg</span>
+                <span class="tag">HTML, JS, uten byggesteg</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/felleskortet" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://felleskortet.no/" target="_blank" rel="noopener">App ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/felleskortet" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://felleskortet.no/" target="_blank" rel="noopener">App</a>
                 </span>
               </div>
             </div>
@@ -221,7 +219,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/gitarformer/" target="_blank" rel="noopener" aria-label="Gitarformer, åpne demo">
-              <img src="assets/screenshots/gitarformer.jpg" alt="Skjermbilde av Gitarformer" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/gitarformer.jpg" alt="Skjermbilde av Gitarformer" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Gitarformer</h3>
@@ -232,10 +230,10 @@
                 sager.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · Canvas · D1</span>
+                <span class="tag">HTML, Canvas, D1</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/gitarformer" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/gitarformer/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/gitarformer" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/gitarformer/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -243,7 +241,7 @@
 
           <li class="card">
             <a class="card__media" href="https://github.com/espenbjork/Pikselhund" target="_blank" rel="noopener" aria-label="Pikselhund på GitHub">
-              <img src="assets/screenshots/pikselhund.jpg" alt="Pikselhund sitter med en oransje leke i munnen" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/pikselhund.jpg" alt="Pikselhund sitter med en oransje leke i munnen" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Pikselhund</h3>
@@ -254,9 +252,9 @@
                 nyttig, og gir meg overraskende mye glede.
               </p>
               <div class="card__actions">
-                <span class="tag">Swift · macOS</span>
+                <span class="tag">Swift, macOS</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/Pikselhund" target="_blank" rel="noopener">Repo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/Pikselhund" target="_blank" rel="noopener">Repo</a>
                 </span>
               </div>
             </div>
@@ -264,7 +262,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/ullballer/" target="_blank" rel="noopener" aria-label="Ullball-planlegger, åpne demo">
-              <img src="assets/screenshots/ullballer.jpg" alt="Skjermbilde av Ullball-planlegger" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/ullballer.jpg" alt="Skjermbilde av Ullball-planlegger" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Ullball-planlegger</h3>
@@ -275,10 +273,10 @@
                 nyanse.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · Canvas</span>
+                <span class="tag">HTML, Canvas</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/ullballer" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/ullballer/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/ullballer" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/ullballer/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -286,7 +284,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/bryllupsbackdrop/index.html?demo=1" target="_blank" rel="noopener" aria-label="Bryllupsbackdrop, åpne demo">
-              <img src="assets/screenshots/bryllupsbackdrop.jpg" alt="Skjermbilde av Bryllupsbackdrop" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/bryllupsbackdrop.jpg" alt="Skjermbilde av Bryllupsbackdrop" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Bryllupsbackdrop</h3>
@@ -297,10 +295,10 @@
                 sammen til gjestebok etterpå.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · JS · Apps Script</span>
+                <span class="tag">HTML, JS, Apps Script</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/bryllupsbackdrop" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/bryllupsbackdrop/index.html?demo=1" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/bryllupsbackdrop" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/bryllupsbackdrop/index.html?demo=1" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -308,7 +306,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/sas-flysok/" target="_blank" rel="noopener" aria-label="SAS-flysøk, åpne demo">
-              <img src="assets/screenshots/sas-flysok.jpg" alt="Skjermbilde av SAS-flysøk" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/sas-flysok.jpg" alt="Skjermbilde av SAS-flysøk" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">SAS-flysøk</h3>
@@ -318,10 +316,10 @@
                 Avinor, Swedavia og AeroDataBox.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · JS · Cloudflare Workers</span>
+                <span class="tag">HTML, JS, Cloudflare Workers</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/sas-flysok" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/sas-flysok/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/sas-flysok" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/sas-flysok/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -329,7 +327,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/ringeliste/" target="_blank" rel="noopener" aria-label="Ringeliste, åpne demo">
-              <img src="assets/screenshots/ringeliste.jpg" alt="Skjermbilde av Ringeliste" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/ringeliste.jpg" alt="Skjermbilde av Ringeliste" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Ringeliste</h3>
@@ -339,10 +337,10 @@
                 og se de 500 kundene sortere seg på nytt.
               </p>
               <div class="card__actions">
-                <span class="tag">HTML · JS</span>
+                <span class="tag">HTML, JS</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/ringeliste" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/ringeliste/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/ringeliste" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/ringeliste/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -350,7 +348,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/drommemail-demo/" target="_blank" rel="noopener" aria-label="Drømmemail, åpne demo">
-              <img src="assets/screenshots/drommemail.jpg" alt="Skjermbilde av Drømmemail" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/drommemail.jpg" alt="Skjermbilde av Drømmemail" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Drømmemail</h3>
@@ -360,10 +358,10 @@
                 ekte innboks involvert.
               </p>
               <div class="card__actions">
-                <span class="tag">Node · AI</span>
+                <span class="tag">Node, AI</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/drommemail-demo" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/drommemail-demo/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/drommemail-demo" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/drommemail-demo/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -371,7 +369,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/transfervindu/" target="_blank" rel="noopener" aria-label="Transfervindu, åpne demo">
-              <img src="assets/screenshots/transfervindu.jpg" alt="Skjermbilde av Transfervindu" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/transfervindu.jpg" alt="Skjermbilde av Transfervindu" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Transfervindu</h3>
@@ -382,8 +380,8 @@
               <div class="card__actions">
                 <span class="tag">HTML</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/transfervindu" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/transfervindu/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/transfervindu" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/transfervindu/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -391,7 +389,7 @@
 
           <li class="card">
             <a class="card__media" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener" aria-label="Gitarstemmer på GitHub">
-              <img src="assets/screenshots/gitarstemmer.jpg" alt="Skjermbilde av Gitarstemmer-appen" loading="lazy" width="1000" height="650">
+              <img src="assets/screenshots/gitarstemmer.jpg" alt="Skjermbilde av Gitarstemmer-appen" loading="lazy" decoding="async" width="1000" height="650">
             </a>
             <div class="card__body">
               <h3 class="card__title">Gitarstemmer</h3>
@@ -400,9 +398,9 @@
                 deteksjon, med farger og piler som sier fra når du er i mål.
               </p>
               <div class="card__actions">
-                <span class="tag">Swift · macOS</span>
+                <span class="tag">Swift, macOS</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">Repo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/Gitarstemmer" target="_blank" rel="noopener">Repo</a>
                 </span>
               </div>
             </div>
@@ -410,7 +408,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener" aria-label="Dreamcast, åpne demo">
-              <img src="assets/screenshots/dreamcast.jpg" alt="Skjermbilde av Dreamcast" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/dreamcast.jpg" alt="Skjermbilde av Dreamcast" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Dreamcast</h3>
@@ -421,8 +419,8 @@
               <div class="card__actions">
                 <span class="tag">HTML</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/dreamcast" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/dreamcast/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -430,7 +428,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener" aria-label="Fra mor til jord, åpne demo">
-              <img src="assets/screenshots/framortiljord.jpg" alt="Skjermbilde av Fra mor til jord" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/framortiljord.jpg" alt="Skjermbilde av Fra mor til jord" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">Fra mor til jord</h3>
@@ -441,8 +439,8 @@
               <div class="card__actions">
                 <span class="tag">HTML</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/fraMorTilJord" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/fraMorTilJord/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -450,7 +448,7 @@
 
           <li class="card">
             <a class="card__media" href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener" aria-label="π-pugger, åpne demo">
-              <img src="assets/screenshots/pi.jpg" alt="Skjermbilde av π-pugger" loading="lazy" width="1000" height="625">
+              <img src="assets/screenshots/pi.jpg" alt="Skjermbilde av π-pugger" loading="lazy" decoding="async" width="1000" height="625">
             </a>
             <div class="card__body">
               <h3 class="card__title">π-pugger</h3>
@@ -461,8 +459,8 @@
               <div class="card__actions">
                 <span class="tag">HTML</span>
                 <span class="card__links">
-                  <a href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">Repo ↗</a>
-                  <a href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener">Demo ↗</a>
+                  <a class="pen" href="https://github.com/espenbjork/pi" target="_blank" rel="noopener">Repo</a>
+                  <a class="pen" href="https://espenbjork.github.io/pi/" target="_blank" rel="noopener">Demo</a>
                 </span>
               </div>
             </div>
@@ -571,25 +569,35 @@
         Har du et problem som trenger en løsning, eller en løsning som leter
         etter et problem? Si fra.
       </p>
-      <ul class="contact__links">
-        <li>
-          <a href="mailto:espen@betulae.net">
-            <span class="contact__type">E-post</span>
-            <span class="contact__value">espen@betulae.net</span>
-          </a>
-        </li>
-        <li>
-          <a href="https://github.com/espenbjork" target="_blank" rel="noopener">
-            <span class="contact__type">GitHub</span>
-            <span class="contact__value">@espenbjork ↗</span>
-          </a>
-        </li>
-      </ul>
+      <p class="contact__mail"><a class="pen" href="mailto:espen@betulae.net">espen@betulae.net</a></p>
+      <p class="contact__more"><a class="pen" href="https://github.com/espenbjork" target="_blank" rel="noopener">github.com/espenbjork</a></p>
+
+      <!-- Slutten: en strek, og Bindersen som kikker over den. Klikk tar deg opp til chatten. -->
+      <div class="contact__end" data-ink>
+        <div class="peek">
+          <button class="clippy__char" type="button" data-bindersen="peek" aria-label="Til toppen, og snakk med Espens assistent">
+            <svg class="clippy__svg" viewBox="0 0 220 320" fill="none" aria-hidden="true" focusable="false">
+              <path class="clippy__wire" d="M138 86 C138 55 78 55 78 86 L78 250 C78 285 150 285 150 250 L150 120 C150 92 100 92 100 120 L100 232" />
+              <g class="clippy__face">
+                <g class="clippy__eyes">
+                  <ellipse class="clippy__eye" cx="96" cy="110" rx="16" ry="20" />
+                  <ellipse class="clippy__eye" cx="140" cy="110" rx="16" ry="20" />
+                  <circle class="clippy__pupil" cx="99" cy="114" r="6.5" />
+                  <circle class="clippy__pupil" cx="143" cy="114" r="6.5" />
+                </g>
+                <path class="clippy__brow clippy__brow--l" d="M80 82 Q96 73 113 80" />
+                <path class="clippy__brow clippy__brow--r" d="M125 80 Q142 73 158 82" />
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
     </section>
   </main>
 
   <script src="assets/js/main.js?v=dev" defer></script>
   <script src="assets/js/easter-eggs.js?v=dev" defer></script>
   <script src="assets/js/clippy.js?v=dev" defer></script>
+  <script src="assets/js/bindersen.js?v=dev" defer></script>
 </body>
 </html>
