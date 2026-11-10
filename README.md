@@ -42,10 +42,12 @@ filer manuelt.
 │   └── index.html
 ├── assets/
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
+│   ├── js/bakgrunn.js       # disen bak arket (WebGL, faller tilbake til CSS)
 │   ├── js/main.js           # streker som tegnes ved synlighet, karusell
 │   ├── js/bindersen.js      # Bindersen: blikk, blunk, bryn, lening
 │   ├── js/clippy.js         # chatten bak Bindersen
 │   ├── js/easter-eggs.js    # Konami-kode + konsoll-hilsen (config øverst)
+│   ├── fonts/               # Source Serif 4 (woff2) og lisensen
 │   ├── favicon.svg
 │   └── og-image.png         # delingsbilde (sosiale medier)
 ├── .github/workflows/
@@ -61,6 +63,7 @@ filer manuelt.
 | Hva | Hvor |
 | --- | --- |
 | Aksentfarge, skrift, farger | de tre reglene øverst i `assets/css/styles.css`, så `:root`-blokken |
+| Hvor sterk disen i bakgrunnen er | `--haze-wash` og `--haze-warm` i `:root`. Mål kontrasten før du øker dem |
 | Slå av/på bevegelse, notater, easter eggs | `data-motion` / `data-notes` / `data-eggs` på `<html>` i `index.html` |
 | Prosjektkort (Arbeid) | `<section id="arbeid">` i `index.html` |
 | Erfaring / CV | `<section id="erfaring">` i `index.html` |

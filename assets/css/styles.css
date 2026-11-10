@@ -7,6 +7,13 @@
    2. Oransje er pennen til Espen. I ro finnes den to steder: streken
       over «ubrukelige» og margnotatet. Ellers bare der du peker.
    3. En skriftfamilie. Størrelse, vekt og kursiv gjør resten.
+
+   Arket selv er ikke flatt: bak alt ligger en dis av papir, uttynnet
+   blekk og uttynnet penn (bakgrunn.js). Den bryter ingen av reglene.
+   Den er vær, ikke innhold: den driver for sakte til å ses i fart, og
+   den bruker ingen farge som ikke står i :root. Glatte flater (det
+   grønne panelet, bildene, snakkebobla) er det den måles mot, så de
+   skal forbli glatte.
    ============================================================ */
 
 /* Source Serif 4, variabel (vekt 300 til 700, optisk størrelse 8 til 60).
@@ -35,7 +42,7 @@
 
   /* Blekk / tekst */
   --ink:#16302a;
-  --ink-2:#4c5f55;
+  --ink-2:#3f5148;   /* mørknet fra #4c5f55 da disen kom: brødtekst skal tåle den mørkeste flekken */
 
   /* Linjer */
   --line:rgba(22,48,42,.16);
@@ -49,6 +56,17 @@
   --brg:#0d3527;
   --on-green:#e8ebe0;
   --accent-on-green:color-mix(in srgb, var(--accent) 68%, var(--on-green));
+
+  /* Disen bak arket: blekket og pennen tynnet ut i papiret. Ingen nye
+     farger, bare flere trinn av de samme. bakgrunn.js leser de to
+     prosentene. Øk dem ikke uten å måle: med disse tallene har brødteksten
+     (--ink-2) 5,0:1 mot den mørkeste flekken, og grensen er 4,5. */
+  --haze-wash:20%;
+  --haze-warm:30%;
+  --haze-wash-c:color-mix(in srgb, var(--brg) var(--haze-wash), var(--paper));
+  --haze-warm-c:color-mix(in srgb, var(--accent) var(--haze-warm), var(--paper));
+  /* Papirkorn: fin støy i blekkfargen */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .086  0 0 0 0 .188  0 0 0 0 .165  1.2 0 0 0 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* Skrift: en familie, variabel i vekt og optisk størrelse */
   --serif:'Source Serif 4', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
@@ -69,14 +87,37 @@
    RESET / BASIS
    ============================================================ */
 *,*::before,*::after{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+html{
+  scroll-behavior:smooth; -webkit-text-size-adjust:100%;
+  /* Arket. Uten JavaScript eller WebGL er dette hele disen: tre stille
+     laveringer. Ellers ligger bakgrunn.js sitt lerret oppå. */
+  background:
+    radial-gradient(62vw 54vh at 88% 6%,  var(--haze-warm-c), transparent 72%),
+    radial-gradient(70vw 62vh at 4% 34%,  var(--paper-2),     transparent 72%),
+    radial-gradient(84vw 70vh at 62% 96%, var(--haze-wash-c), transparent 72%),
+    var(--paper);
+  background-attachment:fixed;
+}
+
+/* Disen (bakgrunn.js) og kornet i papiret. Begge ligger bak alt innhold.
+   Kornet finnes bare her: paneler, bilder og snakkeboble er glatte, og det
+   er mot dem du ser at arket har en overflate. */
+.haze,
+html::after{
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+}
+.haze{ width:100%; height:100%; display:block; }
+html::after{
+  content:"";
+  background:var(--grain) 0 0 / 220px 220px;
+  opacity:.34;
+}
 
 body{
   margin:0;
   font-family:var(--serif);
   font-optical-sizing:auto;
   color:var(--ink);
-  background:var(--paper);
   line-height:1.55;
   font-size:clamp(1.0625rem, 1rem + .25vw, 1.1875rem);
   -webkit-font-smoothing:antialiased;
@@ -361,19 +402,19 @@ button,input{ font:inherit; color:inherit; }
 .carousel__btn:not(:disabled):active{ translate:0 0; }
 .carousel__btn:disabled{ opacity:.22; cursor:default; }
 
-/* Skall, holder kant-toningene som hinter «det er mer» */
-.carousel{ position:relative; }
-.carousel::before,
-.carousel::after{
-  content:""; position:absolute; top:0; bottom:0;
-  inline-size:var(--gutter);
-  pointer-events:none; z-index:2; opacity:0;
-  transition:opacity .3s var(--ease);
+/* Skall, holder kant-toningene som hinter «det er mer». Toningen er en maske
+   på sporet og ikke en papirfarget flate oppå, siden arket bak ikke er
+   ensfarget lenger. --fade-l og --fade-r er registrert så de kan gli. */
+@property --fade-l{ syntax:"<number>"; inherits:true; initial-value:0; }
+@property --fade-r{ syntax:"<number>"; inherits:true; initial-value:0; }
+.carousel{
+  position:relative; --fade-l:0; --fade-r:0;
+  transition:--fade-l .3s var(--ease), --fade-r .3s var(--ease);
 }
-.carousel::before{ left:calc(-1 * var(--gutter));  background:linear-gradient(to right, var(--paper) 15%, transparent); }
-.carousel::after { right:calc(-1 * var(--gutter)); background:linear-gradient(to left,  var(--paper) 15%, transparent); }
-.carousel.can-left::before{ opacity:1; }
-.carousel.can-right::after{ opacity:1; }
+.carousel.can-left{ --fade-l:1; }
+.carousel.can-right{ --fade-r:1; }
+/* Masken klipper også fokusrammen til sporet, så den tegnes på skallet */
+.carousel:has(> .cards:focus-visible){ outline:2px solid var(--accent); outline-offset:6px; border-radius:3px; }
 
 /* Sporet: 2 rader, så mange kolonner som trengs, x-scroll med snap.
    Det går helt ut i margen, så kortene glir ut av arket og ikke inn i en vegg. */
@@ -389,8 +430,14 @@ button,input{ font:inherit; color:inherit; }
   overscroll-behavior-x:contain;
   scrollbar-width:thin;
   scrollbar-color:var(--line-2) transparent;
+  --mask:linear-gradient(to right,
+    rgb(0 0 0 / calc(1 - var(--fade-l))) calc(var(--gutter) * .15),
+    #000 var(--gutter),
+    #000 calc(100% - var(--gutter)),
+    rgb(0 0 0 / calc(1 - var(--fade-r))) calc(100% - var(--gutter) * .15));
+  -webkit-mask-image:var(--mask); mask-image:var(--mask);
 }
-.cards:focus-visible{ outline-offset:6px; }
+.cards:focus-visible{ outline:none; }
 .cards::-webkit-scrollbar{ height:6px; }
 .cards::-webkit-scrollbar-track{ background:transparent; }
 .cards::-webkit-scrollbar-thumb{ background:var(--line-2); border-radius:999px; }
