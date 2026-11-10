@@ -16,10 +16,13 @@ triviell å publisere, `git push`, så er den live.
 npm run dev            # → http://localhost:5173
 
 # 3. publiser
-git add -A
+git add index.html assets/
 git commit -m "Oppdater X"
 git push
 ```
+
+Legg til filer ved navn. Samlekommandoene tar med alt som tilfeldigvis ligger
+i mappa.
 
 Push til `main` trigger automatisk deploy via GitHub Actions. Siden er som
 regel oppdatert i løpet av ~1 minutt. Du trenger aldri å bygge eller laste opp
@@ -39,10 +42,12 @@ filer manuelt.
 │   └── index.html
 ├── assets/
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
-│   ├── js/main.js           # reveal-on-scroll, småanimasjoner
+│   ├── js/main.js           # streker som tegnes ved synlighet, karusell
+│   ├── js/bindersen.js      # Bindersen: blikk, blunk, bryn, lening
+│   ├── js/clippy.js         # chatten bak Bindersen
 │   ├── js/easter-eggs.js    # Konami-kode + konsoll-hilsen (config øverst)
 │   ├── favicon.svg
-│   └── og-image.svg         # delingsbilde (sosiale medier)
+│   └── og-image.png         # delingsbilde (sosiale medier)
 ├── .github/workflows/
 │   ├── deploy.yml           # bygger ingenting, publiserer til GitHub Pages
 │   └── ci.yml               # validerer HTML på hver PR/push (rådgivende)
@@ -55,7 +60,7 @@ filer manuelt.
 
 | Hva | Hvor |
 | --- | --- |
-| Aksentfarge, skrifter, farger | `:root`-blokken øverst i `assets/css/styles.css` |
+| Aksentfarge, skrift, farger | de tre reglene øverst i `assets/css/styles.css`, så `:root`-blokken |
 | Slå av/på bevegelse, notater, easter eggs | `data-motion` / `data-notes` / `data-eggs` på `<html>` i `index.html` |
 | Prosjektkort (Arbeid) | `<section id="arbeid">` i `index.html` |
 | Erfaring / CV | `<section id="erfaring">` i `index.html` |
@@ -92,7 +97,7 @@ Alle scriptene kjører via `npx` og laster verktøyet ved behov, ingen
 
 Felleskortet lå en periode som en kopi under `kortsveip/` her. Appen har sitt
 eget repo, [espenbjork/felleskortet](https://github.com/espenbjork/felleskortet),
-som publiserer `felleskortet.no` — og to kopier av samme app drev fra hverandre
+som publiserer `felleskortet.no`, og to kopier av samme app drev fra hverandre
 helt til den utlagte versjonen ikke lenger leste fakturaer den andre kopien
 leste fint. Nå finnes appen ett sted. `kortsveip/index.html` står igjen som en
 videresending, slik at gamle lenker og delte oppgjør fortsatt virker; den tar

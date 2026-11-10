@@ -296,7 +296,8 @@ button,input{ font:inherit; color:inherit; }
   }
   .clippy__char{ width:112px; }
   .clippy__bubble{
-    position:static; margin-top:1.2rem; width:min(100%, 320px);
+    position:relative; inset:auto;       /* i flyten, men fortsatt anker for lukkekrysset */
+    margin-top:1.2rem; width:min(100%, 320px);
     transform-origin:20% 0;
   }
   .clippy[data-open="false"] .clippy__bubble{ display:none; }

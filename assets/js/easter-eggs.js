@@ -16,7 +16,7 @@
 
   /* ── Konsoll-hilsen til de nysgjerrige ───────────────────── */
   if (CONFIG.consoleGreeting) {
-    const big = "font:600 16px/1.4 'Space Grotesk',sans-serif;color:#bd6a39";
+    const big = "font:600 16px/1.4 'Source Serif 4',serif;color:#bd6a39";
     const small = "color:#4c5f55";
     console.log("%cDu leser konsollen. Imponerende.", big);
     console.log("%cAlt her er bygget for hånd, med AI som medbygger. Hint: ↑ ↑ ↓ ↓ ← → ← → B A", small);
@@ -35,24 +35,9 @@
     const body = document.body;
     body.classList.add(CONFIG.konamiClass);
 
-    // Skru alle nytteverdier opp til et helt urealistisk nivå
-    const meters = document.querySelectorAll(".nytteverdi");
-    const original = [];
-    meters.forEach((m) => {
-      const fill = m.querySelector(".nytteverdi__fill");
-      const pct = m.querySelector(".nytteverdi__pct");
-      original.push({ fill, fillPct: fill ? fill.style.getPropertyValue("--pct") : "", pct, text: pct ? pct.textContent : "" });
-      if (fill) fill.style.setProperty("--pct", "100%");
-      if (pct) pct.textContent = "100 %";
-    });
-
     window.clearTimeout(resetTimer);
     resetTimer = window.setTimeout(() => {
       body.classList.remove(CONFIG.konamiClass);
-      original.forEach((o) => {
-        if (o.fill) o.fill.style.setProperty("--pct", o.fillPct);
-        if (o.pct) o.pct.textContent = o.text;
-      });
     }, CONFIG.konamiDurationMs);
   }
 

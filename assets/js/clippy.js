@@ -19,6 +19,7 @@
   if (!clippy) return;
 
   const char = clippy.querySelector(".clippy__char");
+  const bubble = clippy.querySelector(".clippy__bubble");
   const closeBtn = clippy.querySelector(".clippy__close");
   const log = clippy.querySelector("#clippy-log");
   const form = clippy.querySelector("#clippy-form");
@@ -28,6 +29,12 @@
   const tell = (what) => document.dispatchEvent(new CustomEvent("bindersen", { detail: what }));
 
   function setOpen(open) {
+    // Lukket boble er usynlig, og skal da heller ikke kunne nås med tastatur
+    // eller leses opp. Sto fokus der inne, går det tilbake til Bindersen.
+    if (bubble) {
+      if (!open && char && bubble.contains(document.activeElement)) char.focus();
+      bubble.inert = !open;
+    }
     clippy.dataset.open = open ? "true" : "false";
     tell(open ? "open" : "close");
     if (char) char.setAttribute("aria-expanded", open ? "true" : "false");
@@ -44,6 +51,11 @@
       setOpen(false);
     });
   }
+
+  // Escape lukker chatten.
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && clippy.dataset.open === "true") setOpen(false);
+  });
 
   // Bindersen nederst på siden: tar deg opp til toppen og åpner chatten der.
   const peek = document.querySelector('[data-bindersen="peek"]');
