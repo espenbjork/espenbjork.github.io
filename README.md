@@ -44,8 +44,9 @@ filer manuelt.
 │   ├── css/styles.css       # designsystem + layout (alle tokens øverst)
 │   ├── js/bakgrunn.js       # disen bak arket (WebGL, faller tilbake til CSS)
 │   ├── js/main.js           # streker som tegnes ved synlighet, karusell
-│   ├── js/bindersen.js      # Bindersen: blikk, blunk, bryn, lening
-│   ├── js/clippy.js         # chatten bak Bindersen
+│   ├── js/bindersen.js      # Bindersen: blikk, blunk, bryn, lening og emotene (window.bindersen.play)
+│   ├── js/clippy.js         # chatten bak Bindersen, og window.clippyChat (ask, open, api)
+│   ├── js/mas.js            # Bindersen den masete: følgefiguren som spør når du har vært lenge på siden
 │   ├── js/easter-eggs.js    # Konami-kode + konsoll-hilsen (config øverst)
 │   ├── fonts/               # Source Serif 4 (woff2) og lisensen
 │   ├── favicon.svg
@@ -67,8 +68,35 @@ filer manuelt.
 | Slå av/på bevegelse, notater, easter eggs | `data-motion` / `data-notes` / `data-eggs` på `<html>` i `index.html` |
 | Prosjektkort (Arbeid) | `<section id="arbeid">` i `index.html` |
 | Erfaring / CV | `<section id="erfaring">` i `index.html` |
+| Tidene i maset (45 s, 90 s, 20 s) | konstantene øverst i `assets/js/mas.js` |
 | Konami-oppførsel | `CONFIG`-blokken øverst i `assets/js/easter-eggs.js` |
 | Felleskortet (appen) | eget repo: [espenbjork/felleskortet](https://github.com/espenbjork/felleskortet) |
+
+## Bindersen den masete
+
+Har du vært lenge på siden, dukker en ekstra Bindersen opp ved det du leser og
+stiller et spørsmål. Spørsmålet skriver modellen: `mas.js` spør Worker-en
+(`mode: "mas"`) med seksjonen og prosjektkortet som ligger midt i vinduet, og
+ingenting annet om den besøkende. Det finnes ingen ferdige replikker i siden.
+Tonen styres av `mas.md` i clippy-repoet.
+
+Trappa, hvert trinn en gang per besøk. Tid telles bare mens fanen er synlig og
+toppen av siden er rullet ut av bildet:
+
+1. 45 s: bare bryn og øyne stikker opp over nedre kant.
+2. 90 s: hun tegnes i margen (smal skjerm: nedre hjørne) og spør, med to svar.
+3. 20 s uten svar: hun banker, viskes ut, tegnes nærmere pekeren og spør på nytt.
+   Det skjer to ganger.
+4. Tredje spørsmål uten svar: hun sovner i nedre hjørne og spør ikke mer.
+
+Uten mus går trappa fra 2 til 4. Svarer du, går svaret til chatten
+(`clippyChat.ask`) og samtalen ligger i den vanlige chathistorikken. Krysset
+sender henne bort for resten av besøket (`sessionStorage`). Står en annen
+Bindersen i bildet, eller er chatten i toppen åpen, er hun borte. Med redusert
+bevegelse eller `data-motion="off"` gjør `mas.js` ingenting.
+
+For å se hele trappa uten å vente: legg `?mas=rask` på adressen. Tidene deles på
+femten, så det tar et halvt minutt.
 
 ## Kommandoer
 

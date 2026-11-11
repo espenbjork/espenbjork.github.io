@@ -4,6 +4,7 @@
    (Cloudflare Worker, se github.com/espenbjork/clippy).
    API-nøkkelen ligger i Worker-en, aldri her.
    Blikk, blunk og bryn bor i bindersen.js, som lytter på hendelsen «bindersen».
+   Maset (mas.js) snakker med chatten gjennom window.clippyChat: ask, open og api.
    ============================================================ */
 (() => {
   "use strict";
@@ -57,18 +58,20 @@
     if (e.key === "Escape" && clippy.dataset.open === "true") setOpen(false);
   });
 
+  // Ruller til toppen og åpner chatten der. Brukes av Bindersen nederst på siden,
+  // og av følgefiguren (mas.js) via window.clippyChat.open.
+  function open() {
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+    let done = false;
+    const go = () => { if (!done) { done = true; setOpen(true); } };
+    if ("onscrollend" in window) window.addEventListener("scrollend", go, { once: true });
+    setTimeout(go, smooth ? 900 : 0);
+  }
+
   // Bindersen nederst på siden: tar deg opp til toppen og åpner chatten der.
   const peek = document.querySelector('[data-bindersen="peek"]');
-  if (peek) {
-    peek.addEventListener("click", () => {
-      const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
-      let done = false;
-      const open = () => { if (!done) { done = true; setOpen(true); } };
-      if ("onscrollend" in window) window.addEventListener("scrollend", open, { once: true });
-      setTimeout(open, smooth ? 900 : 0);
-    });
-  }
+  if (peek) peek.addEventListener("click", open);
 
   // ── Chat ──────────────────────────────────────────────────
   const history = []; // { role: "user" | "assistant", content }
@@ -105,20 +108,36 @@
     }
   }
 
-  async function send(text) {
-    if (busy || !text) return;
-    busy = true;
+  // Emotene som kommer med svaret. pek-* blir «pek» mot seksjonen, resten spilles som de står.
+  // Finnes ikke window.bindersen (redusert bevegelse), skjer det ingenting.
+  const PEK = { "pek-arbeid": "arbeid", "pek-erfaring": "erfaring", "pek-kontakt": "kontakt" };
+  function playEmote(name) {
+    const api = window.bindersen;
+    if (!api || typeof name !== "string") return;
+    if (PEK[name]) {
+      const mot = document.getElementById(PEK[name]);
+      if (mot) api.play("pek", { mot });
+      return;
+    }
+    api.play(name);
+  }
 
+  // Sender en melding og venter på svaret. Felles for skjemaet og maset.
+  // `before` er meldinger som skal ligge foran i samme historikk (spørsmålet hun stilte).
+  async function exchange(text, before) {
+    for (const m of before) {
+      history.push(m);
+      addMessage(m.role, m.content);
+    }
     addMessage("user", text);
     history.push({ role: "user", content: text });
     persist();
-    input.value = "";
-    input.disabled = true;
 
     const thinking = addMessage("bot", "…");
     thinking.classList.add("is-thinking");
     tell("thinking");
 
+    let out;
     try {
       const res = await fetch(CLIPPY_API, {
         method: "POST",
@@ -127,22 +146,55 @@
       });
       const data = await res.json().catch(() => ({}));
       const reply = (data && data.reply) || "Hmm. Tomt svar. Typisk.";
+      const emote = data && typeof data.emote === "string" ? data.emote : null;
       thinking.textContent = reply;
       thinking.classList.remove("is-thinking");
       history.push({ role: "assistant", content: reply });
       persist();
       tell("reply");
+      playEmote(emote);
+      out = { reply, emote };
     } catch (e) {
-      thinking.textContent = "Nettet svikter. Eller jeg gidder ikke. Prøv igjen.";
+      const reply = "Nettet svikter. Eller jeg gidder ikke. Prøv igjen.";
+      thinking.textContent = reply;
       thinking.classList.remove("is-thinking");
       tell("error");
+      out = { reply, emote: null, error: true };
+    }
+    log.scrollTop = log.scrollHeight;
+    return out;
+  }
+
+  async function send(text) {
+    if (busy || !text) return;
+    busy = true;
+    input.value = "";
+    input.disabled = true;
+    try {
+      await exchange(text, []);
     } finally {
       busy = false;
       input.disabled = false;
       input.focus();
-      log.scrollTop = log.scrollHeight;
     }
   }
+
+  // Maset stiller et spørsmål og sender svaret hit, uten at skjemaet er i bruk.
+  // Gir { reply, emote }, eller { reply: "", emote: null, error: true } når chatten ikke kan svare nå.
+  async function ask(text, opts) {
+    const answer = typeof text === "string" ? text.trim() : "";
+    if (!answer || busy || !CLIPPY_API) return { reply: "", emote: null, error: true };
+    const before = ((opts && opts.before) || []).filter((m) =>
+      m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content);
+    busy = true;
+    try {
+      return await exchange(answer, before);
+    } finally {
+      busy = false;
+    }
+  }
+
+  window.clippyChat = { ask, open, api: CLIPPY_API };
 
   if (input) input.addEventListener("input", () => tell("typing"));
 

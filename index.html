@@ -596,10 +596,40 @@
     </section>
   </main>
 
+  <!-- Bindersen, den masete: en følgefigur som dukker opp ved det du leser når du har vært lenge på siden.
+       Skjult til mas.js henter henne fram. Tegningen er den samme som over. -->
+  <aside class="mas" id="mas" hidden aria-label="Espens assistent">
+    <button class="clippy__char mas__char" type="button" data-bindersen="folge" aria-label="Snakk med Espens assistent">
+      <svg class="clippy__svg" viewBox="0 0 220 320" fill="none" aria-hidden="true" focusable="false">
+        <path class="clippy__wire" d="M138 86 C138 55 78 55 78 86 L78 250 C78 285 150 285 150 250 L150 120 C150 92 100 92 100 120 L100 232" />
+        <g class="clippy__face">
+          <g class="clippy__eyes">
+            <ellipse class="clippy__eye" cx="96" cy="110" rx="16" ry="20" />
+            <ellipse class="clippy__eye" cx="140" cy="110" rx="16" ry="20" />
+            <circle class="clippy__pupil" cx="99" cy="114" r="6.5" />
+            <circle class="clippy__pupil" cx="143" cy="114" r="6.5" />
+          </g>
+          <path class="clippy__brow clippy__brow--l" d="M80 82 Q96 73 113 80" />
+          <path class="clippy__brow clippy__brow--r" d="M125 80 Q142 73 158 82" />
+        </g>
+      </svg>
+    </button>
+    <button class="mas__x" type="button" aria-label="Send henne bort">×</button>
+    <div class="mas__bubble" hidden>
+      <p class="mas__q" aria-live="polite"></p>
+      <div class="mas__answers">
+        <button class="mas__answer" type="button"></button>
+        <button class="mas__answer" type="button"></button>
+      </div>
+      <div class="mas__log" aria-live="polite" hidden></div>
+    </div>
+  </aside>
+
   <script src="assets/js/bakgrunn.js?v=dev" defer></script>
   <script src="assets/js/main.js?v=dev" defer></script>
   <script src="assets/js/easter-eggs.js?v=dev" defer></script>
   <script src="assets/js/clippy.js?v=dev" defer></script>
   <script src="assets/js/bindersen.js?v=dev" defer></script>
+  <script src="assets/js/mas.js?v=dev" defer></script>
 </body>
 </html>

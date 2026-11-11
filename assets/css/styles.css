@@ -245,7 +245,10 @@ button,input{ font:inherit; color:inherit; }
 }
 .clippy__char:focus-visible{ outline:none; }
 .clippy__char:focus-visible .clippy__wire{ stroke:var(--accent); }
-.clippy__svg{ width:100%; height:auto; display:block; overflow:visible; transform-origin:50% 86%; }
+.clippy__svg{
+  width:100%; height:auto; display:block; overflow:visible; transform-origin:50% 86%;
+  translate:calc(var(--dx, 0) * 1px) calc(var(--dy, 0) * 1px);   /* sukk og bank: hele figuren, ved siden av vuggingen */
+}
 
 .clippy__wire{
   fill:none; stroke:var(--ink); stroke-width:6.5;
@@ -270,7 +273,20 @@ button,input{ font:inherit; color:inherit; }
 }
 .clippy__brow--l{ transform:translateY(calc(var(--bl, 0) * 1px)) rotate(calc(var(--bla, 0) * 1deg)); }
 .clippy__brow--r{ transform:translateY(calc(var(--br, 0) * 1px)) rotate(calc(var(--bra, 0) * 1deg)); }
-.clippy__eyes{ transform-box:fill-box; transform-origin:center; }
+.clippy__eyes{ transform-box:fill-box; transform-origin:center; transform:scaleY(var(--lid, 1)); }
+
+/* Det bare emotene bruker (laget av bindersen.js): prikken til spørsmålstegnet og z-ene til sov.
+   Begge er blekk i samme strek som tråden, og usynlige til en emote ber om dem. */
+.clippy__dot{
+  fill:var(--ink); opacity:0;
+  transform-box:fill-box; transform-origin:center;
+}
+.clippy__z{
+  fill:none; stroke:var(--ink); stroke-width:3.6;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1; stroke-dashoffset:0;
+  opacity:0;
+}
 
 /* Hvile: en rolig vugging. Alt annet er hendelser, ikke tilstander. */
 [data-motion="on"] .is-ready .clippy__svg{ animation:clippy-sway 6.4s ease-in-out 2s infinite; }
@@ -584,6 +600,79 @@ button,input{ font:inherit; color:inherit; }
 .peek .clippy__wire{ stroke-dasharray:none; stroke-dashoffset:0; animation:none !important; }
 .peek .clippy__face{ opacity:1; animation:none !important; }
 .peek .clippy__svg{ animation:none !important; }
+
+/* ── Bindersen, den masete ───────────────────────────────────
+   Følgefiguren som mas.js setter ned ved det du leser. Plassen (left, top)
+   og bobla regnes ut der, her står bare utseendet.
+   Hun starter utegnet, slik toppfiguren gjorde før siden tegnet henne:
+   tråden i skjul og ansiktet borte, til emoten «kom» tegner henne.
+   Siden tegner henne ikke selv, så den innskriften og vuggingen som
+   gjelder toppfiguren slås av her. Ikke som .peek, som tar bort dash helt:
+   da kunne verken «forsvinn» eller «kom» virke. */
+.mas{ --mas-w:clamp(84px, 6.4vw, 104px); }
+.mas__char{
+  position:fixed; z-index:40;
+  width:var(--mas-w);
+}
+.js .mas .clippy__wire{
+  stroke-dasharray:1400; stroke-dashoffset:1400;
+  animation:none !important;
+}
+.js .mas .clippy__face{ opacity:0; animation:none !important; }
+.mas .clippy__svg{ animation:none !important; }
+
+.mas__bubble{
+  position:fixed; z-index:41;
+  width:min(280px, calc(100vw - 2rem));
+  padding:.95rem 1.05rem .9rem;
+  background:var(--paper-2);
+  border:1px solid var(--ink);
+  border-radius:12px;
+  box-shadow:0 18px 40px -22px color-mix(in srgb, var(--ink) 50%, transparent);
+}
+.mas__bubble:not([hidden]){ animation:mas-pop .34s var(--ease-spring) backwards; }
+@keyframes mas-pop{ from{ opacity:0; transform:scale(.92); } }
+
+.mas__q{ font-size:.98rem; line-height:1.4; color:var(--ink); }
+.mas__answers{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.75rem; }
+.mas__answers[hidden]{ display:none; }
+.mas__answer{
+  border:0; cursor:pointer; font-size:.95rem; line-height:1.3;
+  padding:.42rem .78rem; border-radius:8px;
+  color:var(--ink); background:var(--paper);
+  box-shadow:inset 0 0 0 1px var(--line-2);
+  transition:box-shadow .2s var(--ease);
+}
+.mas__answer:hover{ box-shadow:inset 0 0 0 1px var(--ink); }
+.mas__answer[aria-disabled="true"]{ opacity:.5; cursor:default; }
+
+/* Samtalen i bobla: samme meldinger som i chatten over */
+.mas__log{ display:flex; flex-direction:column; gap:.45rem; margin-top:.7rem; }
+.mas__log[hidden]{ display:none; }
+
+/* På det grønne panelet er blekk usynlig. Står hun over det (mas.js sier fra med data-on),
+   tegnes hun i samme lyse farge som teksten der. */
+.mas .clippy__wire, .mas .clippy__brow, .mas .clippy__z{ transition:stroke .3s var(--ease); }
+.mas[data-on="dark"] .clippy__wire,
+.mas[data-on="dark"] .clippy__brow,
+.mas[data-on="dark"] .clippy__z{ stroke:var(--on-green); }
+.mas[data-on="dark"] .clippy__dot{ fill:var(--on-green); }
+
+/* Krysset: synlig hele tiden hun står der */
+.mas__x{
+  position:fixed; z-index:42;
+  display:grid; place-items:center;
+  width:28px; height:28px; padding:0;
+  border-radius:50%; cursor:pointer;
+  font-size:1.1rem; line-height:1; color:var(--ink-2);
+  background:var(--paper-2); border:1px solid var(--line-2);
+  transition:color .2s var(--ease), border-color .2s var(--ease);
+}
+.mas__x:hover{ color:var(--ink); border-color:var(--ink); }
+
+@media (max-width:880px){
+  .mas{ --mas-w:72px; }
+}
 
 /* ============================================================
    BEVEGELSE AV
