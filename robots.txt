@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://espenbjork.github.io/sitemap.xml
+Sitemap: https://espenbjork.no/sitemap.xml

@@ -4,7 +4,7 @@ Personlig porteføljeside. Bevisst lavteknologisk: **ren HTML/CSS/JS, ingen
 rammeverk og ingen byggesteg.** Det gjør den rask, lett å vedlikeholde, og
 triviell å publisere, `git push`, så er den live.
 
-🔗 **Live:** https://espenbjork.github.io/
+🔗 **Live:** https://espenbjork.no/
 
 ---
 
